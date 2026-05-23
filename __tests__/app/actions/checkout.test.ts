@@ -7,7 +7,7 @@ jest.mock('@/lib/auth/supabaseClient', () => ({
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { supabaseServer } = require('@/lib/auth/supabaseClient')
-import { lookupOrCreateCustomer } from '@/app/actions/checkout'
+import { lookupOrCreateCustomer, createOrder } from '@/app/actions/checkout'
 
 describe('lookupOrCreateCustomer', () => {
   beforeEach(() => {
@@ -140,5 +140,95 @@ describe('lookupOrCreateCustomer', () => {
     expect(second.success).toBe(true)
     expect(second.customerId).toBe(customerId)
     expect(second.isReturning).toBe(true)
+  })
+})
+
+describe('createOrder', () => {
+  it('should create order with valid customer and items', async () => {
+    const customerId = 'cust-order-test-123'
+
+    // Mock: customer lookup returns existing customer
+    supabaseServer.from.mockReturnValueOnce({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockResolvedValue({
+        data: { id: customerId },
+        error: null,
+      }),
+    })
+
+    // Mock: order insert
+    supabaseServer.from.mockReturnValueOnce({
+      insert: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({
+        data: { id: 'order-123' },
+        error: null,
+      }),
+    })
+
+    const result = await createOrder({
+      customerId,
+      items: [
+        {
+          id: 'carrie',
+          name: 'Carrie',
+          type: 'mango',
+          quantity: 2,
+          pricePerUnit: 12.5,
+          total: 25.0,
+        },
+      ],
+      totalPrice: 25.0,
+      paymentMethod: 'zelle',
+    })
+
+    expect(result.success).toBe(true)
+    expect(result.orderId).toBe('order-123')
+  })
+
+  it('should fail if customer ID is invalid', async () => {
+    // Mock: customer lookup returns no customer
+    supabaseServer.from.mockReturnValueOnce({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockResolvedValue({
+        data: null,
+        error: null,
+      }),
+    })
+
+    const result = await createOrder({
+      customerId: 'invalid-uuid-12345',
+      items: [
+        {
+          id: 'carrie',
+          name: 'Carrie',
+          type: 'mango',
+          quantity: 1,
+          pricePerUnit: 12.5,
+          total: 12.5,
+        },
+      ],
+      totalPrice: 12.5,
+      paymentMethod: 'zelle',
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toBeDefined()
+  })
+
+  it('should fail if cart is empty', async () => {
+    const customerId = 'cust-empty-test-123'
+
+    const result = await createOrder({
+      customerId,
+      items: [],
+      totalPrice: 0,
+      paymentMethod: 'zelle',
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toContain('empty')
   })
 })

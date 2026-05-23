@@ -1,6 +1,7 @@
 'use server'
 
 import { supabaseServer } from '@/lib/auth/supabaseClient'
+import { CartItem } from '@/lib/types'
 
 // Email validation helper
 function isValidEmail(email: string): boolean {
@@ -108,6 +109,80 @@ export async function lookupOrCreateCustomer(
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to process customer',
+    }
+  }
+}
+
+export interface CreateOrderInput {
+  customerId: string
+  items: CartItem[]
+  totalPrice: number
+  paymentMethod: 'zelle' | 'stripe'
+}
+
+export interface CreateOrderResult {
+  success: boolean
+  orderId?: string
+  error?: string
+}
+
+export async function createOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
+  try {
+    // Validate cart is not empty
+    if (!input.items || input.items.length === 0) {
+      return {
+        success: false,
+        error: 'Cart is empty',
+      }
+    }
+
+    // Validate total price
+    if (input.totalPrice <= 0) {
+      return {
+        success: false,
+        error: 'Total price must be greater than 0',
+      }
+    }
+
+    // Verify customer exists
+    const { data: customer, error: customerError } = await supabaseServer
+      .from('customers')
+      .select('id')
+      .eq('id', input.customerId)
+      .maybeSingle()
+
+    if (customerError) throw customerError
+    if (!customer) {
+      return {
+        success: false,
+        error: 'Customer not found',
+      }
+    }
+
+    // Create order
+    const { data: order, error: insertError } = await supabaseServer
+      .from('fruit_orders')
+      .insert({
+        customer_id: input.customerId,
+        items: input.items,
+        total_price: input.totalPrice,
+        order_status: 'pending_approval',
+        payment_method: input.paymentMethod,
+      })
+      .select('id')
+      .single()
+
+    if (insertError) throw insertError
+
+    return {
+      success: true,
+      orderId: order.id,
+    }
+  } catch (error) {
+    console.error('createOrder error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to create order',
     }
   }
 }
