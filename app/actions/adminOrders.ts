@@ -2,7 +2,7 @@
 
 import { supabaseServer } from '@/lib/auth/supabaseClient'
 import { stripe } from '@/lib/stripe/server'
-import { sendApprovalEmail } from '@/lib/email/service'
+import { sendApprovalEmail, sendCancellationEmail } from '@/lib/email/service'
 
 export interface OrderItem {
   name?: string
@@ -269,16 +269,60 @@ export async function rejectOrder(
   error: string | null
 }> {
   try {
-    // Get order
+    // Get order first to fetch Stripe payment intent ID
     const { data: order, error: getError } = await supabaseServer
       .from('fruit_orders')
-      .select('order_status')
+      .select(
+        `
+        order_status,
+        stripe_payment_intent_id,
+        customer_id,
+        items,
+        total_price,
+        created_at,
+        customer:customers (
+          email,
+          first_name,
+          last_name,
+          phone,
+          address_line_1,
+          address_line_2,
+          city,
+          state,
+          zip_code,
+          country_code
+        )
+      `
+      )
       .eq('id', orderId)
       .single()
 
     if (getError) throw getError
+    if (!order) {
+      return {
+        success: false,
+        error: 'Order not found',
+      }
+    }
+
     if (order.order_status !== 'pending_approval') {
-      throw new Error(`Cannot reject order with status: ${order.order_status}`)
+      return {
+        success: false,
+        error: `Cannot reject order with status: ${order.order_status}`,
+      }
+    }
+
+    // Release Stripe payment hold if payment intent exists
+    if (order.stripe_payment_intent_id) {
+      try {
+        await stripe.paymentIntents.cancel(order.stripe_payment_intent_id)
+      } catch (stripeError) {
+        const errorMessage = stripeError instanceof Error ? stripeError.message : 'Stripe cancel failed'
+        return {
+          success: false,
+          error: `Failed to release payment hold: ${errorMessage}`,
+        }
+      }
     }
 
     // Update order status
@@ -292,7 +336,7 @@ export async function rejectOrder(
 
     if (updateError) throw updateError
 
-    // Log audit entry
+    // Log audit entry with reason
     const { error: auditError } = await supabaseServer.from('order_audit_log').insert({
       order_id: orderId,
       previous_status: 'pending_approval',
@@ -302,6 +346,20 @@ export async function rejectOrder(
     })
 
     if (auditError) throw auditError
+
+    // Send cancellation email (non-blocking)
+    if (order.customer) {
+      const emailResult = await sendCancellationEmail(
+        order.customer.email,
+        process.env.ADMIN_EMAIL || 'admin@seasonalfruitfarm.com',
+        order as OrderWithCustomer,
+        reason
+      )
+      if (!emailResult.success) {
+        console.warn(`Email failed for order ${orderId}: ${emailResult.error}`)
+        // Don't return error - order is already cancelled
+      }
+    }
 
     return { success: true, error: null }
   } catch (error) {

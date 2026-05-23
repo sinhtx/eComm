@@ -12,6 +12,7 @@ jest.mock('@/lib/stripe/server', () => ({
   stripe: {
     paymentIntents: {
       capture: jest.fn(),
+      cancel: jest.fn(),
     },
   },
 }))
@@ -19,6 +20,7 @@ jest.mock('@/lib/stripe/server', () => ({
 // Mock email service
 jest.mock('@/lib/email/service', () => ({
   sendApprovalEmail: jest.fn(),
+  sendCancellationEmail: jest.fn(),
 }))
 
 describe('Admin Orders Server Actions (Part 4 - Admin Dashboard)', () => {
@@ -319,12 +321,19 @@ describe('Admin Orders Server Actions (Part 4 - Admin Dashboard)', () => {
     it('should reject an order and create audit log', async () => {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { supabaseServer } = require('@/lib/auth/supabaseClient')
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { sendCancellationEmail } = require('@/lib/email/service')
 
       // Mock get order
       supabaseServer.from.mockReturnValueOnce({
         select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockResolvedValue({
-          data: { order_status: 'pending_approval' },
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: {
+            order_status: 'pending_approval',
+            stripe_payment_intent_id: null,
+            customer: { email: 'test@example.com' },
+          },
           error: null,
         }),
       })
@@ -340,10 +349,161 @@ describe('Admin Orders Server Actions (Part 4 - Admin Dashboard)', () => {
         insert: jest.fn().mockResolvedValue({ error: null }),
       })
 
+      sendCancellationEmail.mockResolvedValue({ success: true })
+
       const { success, error } = await rejectOrder('order-1', 'Out of stock')
 
       expect(error).toBeNull()
       expect(success).toBe(true)
+    })
+
+    it('should cancel Stripe payment when rejecting order with payment intent', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { supabaseServer } = require('@/lib/auth/supabaseClient')
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { stripe } = require('@/lib/stripe/server')
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { sendCancellationEmail } = require('@/lib/email/service')
+
+      // Mock get order with Stripe payment intent
+      supabaseServer.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: {
+            order_status: 'pending_approval',
+            stripe_payment_intent_id: 'pi_test123',
+            customer_id: 'cust-1',
+            items: [],
+            total_price: 100,
+            customer: { email: 'test@example.com' },
+          },
+          error: null,
+        }),
+      })
+
+      // Mock Stripe cancel
+      stripe.paymentIntents.cancel.mockResolvedValue({ id: 'pi_test123', status: 'cancelled' })
+
+      // Mock update order
+      supabaseServer.from.mockReturnValueOnce({
+        update: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockResolvedValue({ error: null }),
+      })
+
+      // Mock insert audit log
+      supabaseServer.from.mockReturnValueOnce({
+        insert: jest.fn().mockResolvedValue({ error: null }),
+      })
+
+      sendCancellationEmail.mockResolvedValue({ success: true })
+
+      const { success, error } = await rejectOrder('order-1', 'Out of stock')
+
+      expect(success).toBe(true)
+      expect(error).toBeNull()
+      expect(stripe.paymentIntents.cancel).toHaveBeenCalledWith('pi_test123')
+    })
+
+    it('should send cancellation email after rejecting order', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { supabaseServer } = require('@/lib/auth/supabaseClient')
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { sendCancellationEmail } = require('@/lib/email/service')
+
+      // Mock get order
+      supabaseServer.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: {
+            order_status: 'pending_approval',
+            stripe_payment_intent_id: null,
+            customer_id: 'cust-1',
+            items: [{ name: 'Mango', quantity: 1, price: 50, total: 50 }],
+            total_price: 100,
+            customer: { email: 'customer@example.com', first_name: 'John' },
+          },
+          error: null,
+        }),
+      })
+
+      // Mock update order
+      supabaseServer.from.mockReturnValueOnce({
+        update: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockResolvedValue({ error: null }),
+      })
+
+      // Mock insert audit log
+      supabaseServer.from.mockReturnValueOnce({
+        insert: jest.fn().mockResolvedValue({ error: null }),
+      })
+
+      sendCancellationEmail.mockResolvedValue({ success: true })
+
+      const { success, error } = await rejectOrder('order-1', 'Out of stock')
+
+      expect(success).toBe(true)
+      expect(error).toBeNull()
+      expect(sendCancellationEmail).toHaveBeenCalledWith(
+        'customer@example.com',
+        expect.any(String),
+        expect.objectContaining({
+          customer_id: 'cust-1',
+        }),
+        'Out of stock'
+      )
+    })
+
+    it('should return error if Stripe cancel fails', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { supabaseServer } = require('@/lib/auth/supabaseClient')
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { stripe } = require('@/lib/stripe/server')
+
+      // Mock get order
+      supabaseServer.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: {
+            order_status: 'pending_approval',
+            stripe_payment_intent_id: 'pi_test123',
+            customer_id: 'cust-1',
+            items: [],
+            total_price: 100,
+            customer: { email: 'test@example.com' },
+          },
+          error: null,
+        }),
+      })
+
+      // Mock Stripe cancel failure
+      stripe.paymentIntents.cancel.mockRejectedValue(new Error('Payment not found'))
+
+      const { success, error } = await rejectOrder('order-1', 'Out of stock')
+
+      expect(success).toBe(false)
+      expect(error).toContain('Failed to release payment hold')
+    })
+
+    it('should return error if order is not pending', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { supabaseServer } = require('@/lib/auth/supabaseClient')
+
+      supabaseServer.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: { order_status: 'approved' },
+          error: null,
+        }),
+      })
+
+      const { success, error } = await rejectOrder('order-1', 'Out of stock')
+
+      expect(success).toBe(false)
+      expect(error).toContain('Cannot reject order')
     })
   })
 })
