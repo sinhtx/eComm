@@ -7,7 +7,7 @@ jest.mock('@/lib/auth/supabaseClient', () => ({
   },
 }))
 
-describe.skip('Admin Orders Server Actions (Part 4 - Admin Dashboard - skipped)', () => {
+describe.skip('Admin Orders Server Actions (Part 4 - Admin Dashboard)', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
