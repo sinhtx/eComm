@@ -1,6 +1,8 @@
 'use server'
 
 import { supabaseServer } from '@/lib/auth/supabaseClient'
+import { stripe } from '@/lib/stripe/server'
+import { sendApprovalEmail } from '@/lib/email/service'
 
 export interface OrderItem {
   name?: string
@@ -151,16 +153,66 @@ export async function approveOrder(
   error: string | null
 }> {
   try {
-    // Get order first
+    // Get order first to fetch Stripe payment intent ID
     const { data: order, error: getError } = await supabaseServer
       .from('fruit_orders')
-      .select('order_status')
+      .select(
+        `
+        order_status,
+        stripe_payment_intent_id,
+        customer_id,
+        items,
+        total_price,
+        created_at,
+        customer:customers (
+          email,
+          first_name,
+          last_name,
+          phone,
+          address_line_1,
+          address_line_2,
+          city,
+          state,
+          zip_code,
+          country_code
+        )
+      `
+      )
       .eq('id', orderId)
       .single()
 
     if (getError) throw getError
+    if (!order) {
+      return {
+        success: false,
+        error: 'Order not found',
+      }
+    }
+
     if (order.order_status !== 'pending_approval') {
-      throw new Error(`Cannot approve order with status: ${order.order_status}`)
+      return {
+        success: false,
+        error: `Cannot approve order with status: ${order.order_status}`,
+      }
+    }
+
+    // Capture Stripe payment if payment intent exists
+    if (order.stripe_payment_intent_id) {
+      try {
+        const captureResult = await stripe.paymentIntents.capture(order.stripe_payment_intent_id)
+        if (captureResult.status !== 'succeeded') {
+          return {
+            success: false,
+            error: `Stripe capture failed with status: ${captureResult.status}`,
+          }
+        }
+      } catch (stripeError) {
+        const errorMessage = stripeError instanceof Error ? stripeError.message : 'Stripe capture failed'
+        return {
+          success: false,
+          error: `Failed to capture payment: ${errorMessage}`,
+        }
+      }
     }
 
     // Update order status
@@ -184,6 +236,19 @@ export async function approveOrder(
     })
 
     if (auditError) throw auditError
+
+    // Send approval email (non-blocking - failures logged but don't fail the operation)
+    if (order.customer) {
+      const emailResult = await sendApprovalEmail(
+        order.customer.email,
+        process.env.ADMIN_EMAIL || 'admin@seasonalfruitfarm.com',
+        order as OrderWithCustomer
+      )
+      if (!emailResult.success) {
+        console.warn(`Email failed for order ${orderId}: ${emailResult.error}`)
+        // Don't return error - order is already approved
+      }
+    }
 
     return { success: true, error: null }
   } catch (error) {
