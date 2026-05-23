@@ -5,9 +5,20 @@ jest.mock('@/lib/auth/supabaseClient', () => ({
   },
 }))
 
+// Mock Stripe before importing the server action
+jest.mock('@/lib/stripe/server', () => ({
+  stripe: {
+    paymentIntents: {
+      create: jest.fn(),
+    },
+  },
+}))
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { supabaseServer } = require('@/lib/auth/supabaseClient')
-import { lookupOrCreateCustomer, createOrder } from '@/app/actions/checkout'
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { stripe } = require('@/lib/stripe/server')
+import { lookupOrCreateCustomer, createOrder, createPaymentIntent } from '@/app/actions/checkout'
 
 describe('lookupOrCreateCustomer', () => {
   beforeEach(() => {
@@ -230,5 +241,85 @@ describe('createOrder', () => {
 
     expect(result.success).toBe(false)
     expect(result.error).toContain('empty')
+  })
+})
+
+describe('createPaymentIntent', () => {
+  it('should create Stripe payment intent with manual capture mode', async () => {
+    const orderId = 'test-order-id-123'
+    const amount = 4500
+    const customerEmail = 'stripe-test@example.com'
+    const paymentIntentId = 'pi_test_123'
+    const clientSecret = 'pi_test_123_secret_abc'
+
+    // Mock: order lookup returns existing order
+    supabaseServer.from.mockReturnValueOnce({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockResolvedValue({
+        data: { id: orderId },
+        error: null,
+      }),
+    })
+
+    // Mock: Stripe payment intent creation
+    stripe.paymentIntents.create.mockResolvedValue({
+      id: paymentIntentId,
+      client_secret: clientSecret,
+      amount,
+      currency: 'usd',
+      capture_method: 'manual',
+      status: 'requires_payment_method',
+    })
+
+    // Mock: order update with payment intent ID
+    supabaseServer.from.mockReturnValueOnce({
+      update: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockResolvedValue({
+        error: null,
+      }),
+    })
+
+    const result = await createPaymentIntent({
+      orderId,
+      amount,
+      customerEmail,
+    })
+
+    expect(result.success).toBe(true)
+    expect(result.clientSecret).toBe(clientSecret)
+    expect(result.paymentIntentId).toBe(paymentIntentId)
+  })
+
+  it('should fail if amount is not greater than 0', async () => {
+    const result = await createPaymentIntent({
+      orderId: 'test-order-id-123',
+      amount: 0,
+      customerEmail: 'test@example.com',
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toContain('greater than 0')
+  })
+
+  it('should fail if order does not exist', async () => {
+    // Mock: order lookup returns no order
+    supabaseServer.from.mockReturnValueOnce({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockResolvedValue({
+        data: null,
+        error: null,
+      }),
+    })
+
+    const result = await createPaymentIntent({
+      orderId: 'nonexistent-order-id',
+      amount: 4500,
+      customerEmail: 'test@example.com',
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error).toContain('not found')
   })
 })

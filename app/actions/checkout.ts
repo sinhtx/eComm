@@ -1,6 +1,7 @@
 'use server'
 
 import { supabaseServer } from '@/lib/auth/supabaseClient'
+import { stripe } from '@/lib/stripe/server'
 import { CartItem } from '@/lib/types'
 
 // Email validation helper
@@ -183,6 +184,82 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to create order',
+    }
+  }
+}
+
+export interface CreatePaymentIntentInput {
+  orderId: string
+  amount: number // in cents, e.g., $45.00 = 4500
+  customerEmail: string
+}
+
+export interface CreatePaymentIntentResult {
+  success: boolean
+  clientSecret?: string
+  paymentIntentId?: string
+  error?: string
+}
+
+export async function createPaymentIntent(
+  input: CreatePaymentIntentInput
+): Promise<CreatePaymentIntentResult> {
+  try {
+    // Validate amount
+    if (input.amount <= 0) {
+      return {
+        success: false,
+        error: 'Amount must be greater than 0',
+      }
+    }
+
+    // Verify order exists
+    const { data: order, error: orderError } = await supabaseServer
+      .from('fruit_orders')
+      .select('id')
+      .eq('id', input.orderId)
+      .maybeSingle()
+
+    if (orderError) throw orderError
+    if (!order) {
+      return {
+        success: false,
+        error: 'Order not found',
+      }
+    }
+
+    // Create Stripe payment intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: input.amount,
+      currency: 'usd',
+      capture_method: 'manual', // Pre-authorization: funds held, not captured yet
+      receipt_email: input.customerEmail,
+      metadata: {
+        orderId: input.orderId,
+      },
+    })
+
+    // Store payment intent ID in order
+    const { error: updateError } = await supabaseServer
+      .from('fruit_orders')
+      .update({
+        stripe_payment_intent_id: paymentIntent.id,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', input.orderId)
+
+    if (updateError) throw updateError
+
+    return {
+      success: true,
+      clientSecret: paymentIntent.client_secret!,
+      paymentIntentId: paymentIntent.id,
+    }
+  } catch (error) {
+    console.error('createPaymentIntent error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to create payment intent',
     }
   }
 }
