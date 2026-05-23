@@ -1,7 +1,8 @@
 import { Resend } from 'resend'
-import type { OrderWithCustomer } from '@/app/actions/adminOrders'
+import type { OrderWithCustomer, OrderItem, Customer } from '@/app/actions/adminOrders'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
+// ADMIN_EMAIL is used as fallback when adminEmail parameter is not provided
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@seasonalfruitfarm.com'
 
 interface EmailResult {
@@ -9,13 +10,13 @@ interface EmailResult {
   error?: string
 }
 
-function formatOrderItems(items: any[]): string {
+function formatOrderItems(items: OrderItem[]): string {
   return items
     .map((item) => `${item.name} x${item.quantity} @ $${item.price.toFixed(2)} = $${item.total.toFixed(2)}`)
     .join('<br />')
 }
 
-function formatAddress(customer: any): string {
+function formatAddress(customer: Customer): string {
   return `${customer.first_name} ${customer.last_name}<br />${customer.address_line_1}<br />${customer.city}, ${customer.state} ${customer.zip_code}`
 }
 
@@ -50,7 +51,7 @@ export async function sendApprovalEmail(
 
     const result = await resend.emails.send({
       from: 'orders@seasonalfruitfarm.com',
-      to: [customerEmail, adminEmail],
+      to: [customerEmail, adminEmail || ADMIN_EMAIL],
       subject: `Your Seasonal Fruit Farm Order #${order.id} Approved`,
       html: emailHtml,
     })
@@ -81,7 +82,6 @@ export async function sendCancellationEmail(
 ): Promise<EmailResult> {
   try {
     const itemsHtml = formatOrderItems(order.items)
-    const addressHtml = formatAddress(order.customer)
 
     const emailHtml = `
       <h2>Order Cancelled</h2>
@@ -103,7 +103,7 @@ export async function sendCancellationEmail(
 
     const result = await resend.emails.send({
       from: 'orders@seasonalfruitfarm.com',
-      to: [customerEmail, adminEmail],
+      to: [customerEmail, adminEmail || ADMIN_EMAIL],
       subject: `Your Seasonal Fruit Farm Order #${order.id} Cancelled`,
       html: emailHtml,
     })
