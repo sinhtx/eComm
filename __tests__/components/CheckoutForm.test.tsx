@@ -9,7 +9,13 @@ jest.mock('@/app/actions/checkout', () => ({
   createPaymentIntent: jest.fn(),
 }))
 
-const { lookupOrCreateCustomer, createOrder, createPaymentIntent } = require('@/app/actions/checkout')
+import * as checkoutActions from '@/app/actions/checkout'
+
+const { lookupOrCreateCustomer, createOrder, createPaymentIntent } = checkoutActions as unknown as {
+  lookupOrCreateCustomer: jest.Mock
+  createOrder: jest.Mock
+  createPaymentIntent: jest.Mock
+}
 
 describe('CheckoutForm', () => {
   beforeEach(() => {

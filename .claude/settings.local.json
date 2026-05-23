@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm test *)",
+      "Bash(npm install *)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(pkill -f \"node.*next dev\")",
+      "Bash(awk '{print $2}')",
+      "Bash(xargs -r kill -9)",
+      "Bash(npm run *)",
+      "Bash(git commit *)",
+      "Bash(xargs grep *)",
+      "Bash(npm list *)",
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(kill %1)"
+    ]
+  }
+}

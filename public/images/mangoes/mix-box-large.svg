@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <rect fill="#FEF3C7" width="300" height="300"/>
+  <rect x="40" y="70" width="220" height="160" fill="#F5DEB3" stroke="#D97706" stroke-width="3" rx="4"/>
+  <circle cx="80" cy="115" r="32" fill="#FDE047"/>
+  <circle cx="130" cy="85" r="32" fill="#FBBF24"/>
+  <circle cx="180" cy="105" r="32" fill="#F59E0B"/>
+  <circle cx="100" cy="165" r="32" fill="#FBBF24"/>
+  <circle cx="170" cy="175" r="32" fill="#FDE047"/>
+  <text x="150" y="270" font-size="18" font-weight="bold" text-anchor="middle" fill="#1F2937">Large Mix</text>
+</svg>

@@ -5,13 +5,11 @@ import { CartItem } from '@/lib/types'
 interface CartItemsListProps {
   items: CartItem[]
   onRemoveItem: (itemId: string) => void
-  onUpdateQuantity: (itemId: string, quantity: number) => void
 }
 
 export function CartItemsList({
   items,
   onRemoveItem,
-  onUpdateQuantity,
 }: CartItemsListProps) {
   if (items.length === 0) {
     return (

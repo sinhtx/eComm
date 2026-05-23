@@ -1,0 +1,14 @@
+[
+  {
+    "name": "context7",
+    "description": "Get up-to-date, version-specific documentation and code examples from any library or framework",
+    "disabled": false,
+    "mcpConfig": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@upstash/context7-mcp@latest"
+      ]
+    }
+  }
+]

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="mangoGrad8" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FECDD3;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FBBF24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F59E0B;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect fill="#E0E7FF" width="300" height="300"/>
+  <ellipse cx="150" cy="140" rx="75" ry="80" fill="url(#mangoGrad8)"/>
+  <path d="M 150 45 Q 145 55 142 70 L 158 70 Q 155 55 150 45" fill="#2D5016"/>
+  <circle cx="140" cy="160" r="8" fill="#DC2626" opacity="0.7"/>
+  <text x="150" y="270" font-size="24" font-weight="bold" text-anchor="middle" fill="#1F2937">Alphonso</text>
+</svg>

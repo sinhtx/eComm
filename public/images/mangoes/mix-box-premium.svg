@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <rect fill="#FEF9E7" width="300" height="300"/>
+  <rect x="40" y="70" width="220" height="160" fill="#FFF8DC" stroke="#B8860B" stroke-width="4" rx="4"/>
+  <circle cx="85" cy="120" r="35" fill="#FFD700"/>
+  <circle cx="150" cy="90" r="35" fill="#FBBF24"/>
+  <circle cx="210" cy="110" r="35" fill="#F59E0B"/>
+  <circle cx="120" cy="160" r="35" fill="#FECACA"/>
+  <path d="M 150 40 L 155 55 L 171 55 L 158 65 L 163 80 L 150 71 L 137 80 L 142 65 L 129 55 L 145 55 Z" fill="#FFD700"/>
+  <text x="150" y="270" font-size="16" font-weight="bold" text-anchor="middle" fill="#1F2937">Premium</text>
+</svg>

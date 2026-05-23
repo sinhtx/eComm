@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="mangoGrad7" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FECACA;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FBBF24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FBBF24;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect fill="#E0E7FF" width="300" height="300"/>
+  <ellipse cx="150" cy="150" rx="55" ry="70" fill="url(#mangoGrad7)"/>
+  <path d="M 150 60 Q 145 70 142 85 L 158 85 Q 155 70 150 60" fill="#2D5016"/>
+  <text x="150" y="270" font-size="24" font-weight="bold" text-anchor="middle" fill="#1F2937">Ataulfo</text>
+</svg>

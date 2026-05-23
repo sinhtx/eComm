@@ -3,8 +3,14 @@ import { CartSidebar } from '@/components/CartSidebar'
 import { CartItem } from '@/lib/types'
 
 // Mock CheckoutForm to avoid loading server actions in tests
+interface MockCheckoutFormProps {
+  onCheckoutComplete: (orderId: string, method: string) => void
+  cartItems: unknown[]
+  cartTotal: number
+}
+
 jest.mock('@/components/CheckoutForm', () => ({
-  CheckoutForm: ({ onCheckoutComplete, cartItems, cartTotal, onError }: any) => (
+  CheckoutForm: ({ onCheckoutComplete, cartTotal }: MockCheckoutFormProps) => (
     <div data-testid="checkout-form">
       <button
         onClick={() => onCheckoutComplete('test-order-123', 'zelle')}
