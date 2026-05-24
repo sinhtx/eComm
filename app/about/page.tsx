@@ -2,7 +2,6 @@
 
 import { HeroSection } from '@/components/HeroSection'
 import { StoryBeat } from '@/components/StoryBeat'
-import { Footer } from '@/components/Footer'
 import { aboutContent } from '@/lib/constants/aboutContent'
 
 export default function AboutPage() {
@@ -71,8 +70,6 @@ export default function AboutPage() {
         ctaText="Shop Now"
         ctaLink="/shop"
       />
-
-      <Footer />
     </div>
   )
 }

@@ -8,7 +8,6 @@ import { ValuePropositions } from '@/components/ValueProposition'
 import { SeasonalHighlight } from '@/components/SeasonalHighlight'
 import { Testimonials } from '@/components/TestimonialCard'
 import { NewsletterSignup } from '@/components/NewsletterSignup'
-import { Footer } from '@/components/Footer'
 import { getAvailableMangoes, getAllMangoes } from '@/lib/mangoes'
 import { testimonials } from '@/lib/constants/testimonials'
 import type { MangoVariety } from '@/lib/types'
@@ -148,9 +147,6 @@ export default function Home() {
 
       {/* Section 7: Newsletter */}
       <NewsletterSignup />
-
-      {/* Section 8: Footer */}
-      <Footer />
     </div>
   )
 }

@@ -1,7 +1,6 @@
 'use client'
 
 import { ContactForm } from '@/components/ContactForm'
-import { Footer } from '@/components/Footer'
 
 export default function ContactPage() {
   return (
@@ -101,8 +100,6 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }
