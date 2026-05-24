@@ -11,10 +11,9 @@ import { NewsletterSignup } from '@/components/NewsletterSignup'
 import { Footer } from '@/components/Footer'
 import { getAvailableMangoes, getAllMangoes } from '@/lib/mangoes'
 import { testimonials } from '@/lib/constants/testimonials'
-import { MangoVariety } from '@/lib/types'
+import type { MangoVariety } from '@/lib/types'
 
 export default function Home() {
-  const [mangoes, setMangoes] = useState<MangoVariety[]>([])
   const [mangoesMeta, setMangoesMeta] = useState<Array<{ variety: MangoVariety; comingSoonDate: string | null }>>([])
   const [loading, setLoading] = useState(true)
   const [selectedMango, setSelectedMango] = useState<MangoVariety | null>(null)
@@ -23,7 +22,6 @@ export default function Home() {
     const loadMangoes = async () => {
       try {
         const availableData = await getAvailableMangoes()
-        setMangoes(availableData)
 
         // For product grid, use getAllMangoes to get coming soon metadata
         const allMeta = await getAllMangoes()

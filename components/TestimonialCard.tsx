@@ -27,7 +27,7 @@ export function TestimonialCard({
 
       {/* Quote */}
       <p className="text-body italic font-georgia text-neutral-charcoal mb-4">
-        "{quote}"
+        &quot;{quote}&quot;
       </p>
 
       {/* Customer Name */}

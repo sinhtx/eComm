@@ -36,7 +36,7 @@ export function SeasonalHighlight({
           <div className="space-y-6">
             <div>
               <h2 className="text-h2 mb-2 text-neutral-charcoal">
-                This Season's Star: {mangoName}
+                This Season&apos;s Star: {mangoName}
               </h2>
               <p className="text-body text-neutral-charcoal leading-relaxed">
                 {story}

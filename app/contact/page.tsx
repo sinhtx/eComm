@@ -11,8 +11,8 @@ export default function ContactPage() {
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-h1 mb-4 text-neutral-charcoal">Get In Touch</h1>
           <p className="text-lg text-neutral-gray max-w-2xl mx-auto">
-            Have a question? Want to discuss wholesale? We'd love to hear from you.
-            Reach out anytime—we'll get back to you soon.
+            Have a question? Want to discuss wholesale? We&apos;d love to hear from you.
+            Reach out anytime&mdash;we&apos;ll get back to you soon.
           </p>
         </div>
       </div>
@@ -93,8 +93,8 @@ export default function ContactPage() {
               {/* Special Note */}
               <div className="bg-primary-yellow/10 border-l-4 border-primary-yellow p-4 rounded">
                 <p className="text-sm text-neutral-charcoal font-semibold">
-                  💡 Wholesale & Partnership inquiries welcome! Select "Wholesale
-                  Inquiry" in the form.
+                  💡 Wholesale &amp; Partnership inquiries welcome! Select &quot;Wholesale
+                  Inquiry&quot; in the form.
                 </p>
               </div>
             </div>
