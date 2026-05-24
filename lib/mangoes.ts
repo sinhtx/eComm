@@ -1,102 +1,147 @@
-import { MangoVariety } from './types';
+'use client'
 
-export const mangoes: MangoVariety[] = [
-  {
-    id: 'carrie',
-    name: 'Carrie',
-    description: 'Sweet, smooth tropical flavor with minimal fiber. Perfect for first-time mango lovers.',
-    imageUrl: '/images/mangoes/carrie.svg',
-    available: true,
-    inSeason: true,
-    pricePerPound: 6.5,
-  },
-  {
-    id: 'mallika',
-    name: 'Mallika',
-    description: 'Rich, creamy texture with balanced sweetness and slight tang. A customer favorite.',
-    imageUrl: '/images/mangoes/mallika.svg',
-    available: true,
-    inSeason: true,
-    pricePerPound: 6.5,
-  },
-  {
-    id: 'nam-dok-mai',
-    name: 'Nam Dok Mai',
-    description: 'Golden-colored with floral notes and smooth, fiber-free flesh. Premium quality.',
-    imageUrl: '/images/mangoes/nam-dok-mai.svg',
-    available: true,
-    inSeason: false,
-    pricePerPound: 7.5,
-  },
-  {
-    id: 'frorigan',
-    name: 'Frorigan',
-    description: 'Large, vibrant mango with sweet juice and aromatic flavor profile.',
-    imageUrl: '/images/mangoes/frorigan.svg',
-    available: true,
-    inSeason: true,
-    pricePerPound: 6.0,
-  },
-  {
-    id: 'kent',
-    name: 'Kent',
-    description: 'Stringless, creamy flesh with delicate sweetness. Excellent for fresh eating.',
-    imageUrl: '/images/mangoes/kent.svg',
-    available: true,
-    inSeason: true,
-    pricePerPound: 6.5,
-  },
-  {
-    id: 'tommy-atkins',
-    name: 'Tommy Atkins',
-    description: 'Firm texture, good shipping quality, naturally sweet with slight tartness.',
-    imageUrl: '/images/mangoes/tommy-atkins.svg',
-    available: true,
-    inSeason: true,
-    pricePerPound: 5.5,
-  },
-  {
-    id: 'ataulfo',
-    name: 'Ataulfo',
-    description: 'Small but mighty—dense, creamy, and intensely sweet. No fiber.',
-    imageUrl: '/images/mangoes/ataulfo.svg',
-    available: true,
-    inSeason: false,
-    pricePerPound: 8.0,
-  },
-  {
-    id: 'alphonso',
-    name: 'Alphonso',
-    description: 'The King of Mangoes—buttery texture, complex flavor, premium delicacy.',
-    imageUrl: '/images/mangoes/alphonso.svg',
-    available: true,
-    inSeason: false,
-    pricePerPound: 9.0,
-  },
-  {
-    id: 'francis',
-    name: 'Francis',
-    description: 'Unique elongated shape, sweet-tart balance, velvety skin.',
-    imageUrl: '/images/mangoes/francis.svg',
-    available: false,
-    inSeason: false,
-    pricePerPound: 7.0,
-  },
-  {
-    id: 'haden',
-    name: 'Haden',
-    description: 'Classic heritage variety, red-blushed skin, sweet and aromatic.',
-    imageUrl: '/images/mangoes/haden.svg',
-    available: true,
-    inSeason: false,
-    pricePerPound: 6.5,
-  },
-];
+import { MangoVariety } from './types'
+import { getFruits, type FruitWithImage } from '@/app/actions/adminFruits'
 
-export function getAvailableMangoes(): MangoVariety[] {
-  return mangoes.filter((m) => m.available);
+// Cache management for database fruits
+let cachedFruits: FruitWithImage[] | null = null
+let cacheTime = 0
+const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
+/**
+ * Fetch available mangoes from Supabase database.
+ * Filters: available = true AND (no coming_soon_date OR coming_soon_date <= now)
+ * Now fetches from Supabase database instead of hardcoded data.
+ * Implements client-side caching (5 minute TTL) to avoid excessive DB calls.
+ */
+export async function getAvailableMangoes(): Promise<MangoVariety[]> {
+  // Use cache if fresh
+  if (cachedFruits && Date.now() - cacheTime < CACHE_DURATION) {
+    return convertFruitsToMangoVarietiesWithMeta(cachedFruits).map((m) => m.variety)
+  }
+
+  const { data, error } = await getFruits()
+  if (error || !data) {
+    console.error('Failed to fetch fruits:', error)
+    return [] // Return empty on error
+  }
+
+  // Update cache
+  cachedFruits = data
+  cacheTime = Date.now()
+
+  // Filter: available AND not coming soon (coming_soon_date is null or passed)
+  const availableFruits = data.filter((fruit) => {
+    // Must be available
+    if (!fruit.available) return false
+
+    // If no coming_soon_date, include it
+    if (!fruit.coming_soon_date) return true
+
+    // If coming_soon_date exists, only include if it's in the past
+    const comingSoonDate = new Date(fruit.coming_soon_date)
+    return comingSoonDate <= new Date()
+  })
+
+  return convertFruitsToMangoVarieties(availableFruits)
 }
 
-export function getMangoById(id: string): MangoVariety | undefined {
-  return mangoes.find((m) => m.id === id);
+/**
+ * Fetch all mangoes including coming soon items.
+ * Returns fruits with coming_soon_date metadata for UI to display Coming Soon overlay.
+ */
+export async function getAllMangoes(): Promise<
+  Array<{ variety: MangoVariety; comingSoonDate: string | null }>
+> {
+  // Use cache if fresh
+  if (cachedFruits && Date.now() - cacheTime < CACHE_DURATION) {
+    return convertFruitsToMangoVarietiesWithMeta(cachedFruits)
+  }
+
+  const { data, error } = await getFruits()
+  if (error || !data) {
+    console.error('Failed to fetch fruits:', error)
+    return []
+  }
+
+  // Update cache
+  cachedFruits = data
+  cacheTime = Date.now()
+
+  // Include all available fruits (with or without coming_soon_date)
+  const availableFruits = data.filter((f) => f.available)
+
+  return convertFruitsToMangoVarietiesWithMeta(availableFruits)
+}
+
+/**
+ * Get a single mango by ID from cache or database.
+ * Falls back to fresh DB fetch if not in cache.
+ */
+export async function getMangoById(id: string): Promise<MangoVariety | undefined> {
+  let fruits = cachedFruits
+
+  // If cache is empty or stale, fetch fresh data
+  if (!fruits || Date.now() - cacheTime >= CACHE_DURATION) {
+    const { data, error } = await getFruits()
+    if (error || !data) {
+      console.error('Failed to fetch fruits:', error)
+      return undefined
+    }
+    fruits = data
+    cachedFruits = data
+    cacheTime = Date.now()
+  }
+
+  const fruit = fruits.find((f) => f.id === id)
+  if (!fruit) return undefined
+
+  return convertFruitToMangoVariety(fruit)
+}
+
+/**
+ * Convert FruitWithImage from database to MangoVariety interface.
+ */
+function convertFruitToMangoVariety(fruit: FruitWithImage): MangoVariety {
+  const imageUrl =
+    fruit.current_image?.imageUrl || getPlaceholderImageUrl(fruit.name)
+
+  return {
+    id: fruit.id,
+    name: fruit.name,
+    description: fruit.description,
+    imageUrl,
+    available: fruit.available,
+    inSeason: fruit.in_season,
+    pricePerPound: fruit.price_per_pound,
+  }
+}
+
+/**
+ * Convert array of fruits to MangoVariety[].
+ */
+function convertFruitsToMangoVarieties(fruits: FruitWithImage[]): MangoVariety[] {
+  return fruits.map(convertFruitToMangoVariety)
+}
+
+/**
+ * Convert array of fruits to MangoVariety[] with coming_soon_date metadata.
+ */
+function convertFruitsToMangoVarietiesWithMeta(
+  fruits: FruitWithImage[]
+): Array<{ variety: MangoVariety; comingSoonDate: string | null }> {
+  return fruits.map((fruit) => ({
+    variety: convertFruitToMangoVariety(fruit),
+    comingSoonDate: fruit.coming_soon_date,
+  }))
+}
+
+/**
+ * Generate placeholder image URL for a fruit variety.
+ * Uses lowercase mango name with .svg extension.
+ * Falls back to generic SVG if specific variety image not found.
+ */
+function getPlaceholderImageUrl(fruitName: string): string {
+  const sanitized = fruitName.toLowerCase().replace(/\s+/g, '-')
+  return `/images/mangoes/${sanitized}.svg`
 }

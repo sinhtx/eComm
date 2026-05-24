@@ -1,16 +1,34 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { MangoVariety, CartItem } from '@/lib/types';
 import { getAvailableMangoes } from '@/lib/mangoes';
 import { PricingToggle } from '@/components/PricingToggle';
 
 export default function OptionC() {
-  const mangoes = getAvailableMangoes();
+  const [mangoes, setMangoes] = useState<MangoVariety[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const loadMangoes = async () => {
+      try {
+        setLoading(true);
+        const data = await getAvailableMangoes();
+        setMangoes(data);
+      } catch (err) {
+        console.error('Failed to load mangoes:', err);
+        setMangoes([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMangoes();
+  }, []);
 
   const selectedMango = mangoes[selectedIndex];
 
@@ -60,6 +78,16 @@ export default function OptionC() {
         <h2 className="text-2xl font-bold text-slate-900 mb-2">Our Premium Mangoes</h2>
         <p className="text-slate-600 mb-6">Scroll left/right to browse. Click a card to select.</p>
 
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-slate-600">Loading mangoes...</p>
+          </div>
+        ) : mangoes.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-slate-600">No mangoes available at the moment.</p>
+          </div>
+        ) : (
+          <>
         {/* Horizontal Carousel */}
         <div className="mb-8">
           <div className="relative group">
@@ -168,7 +196,7 @@ export default function OptionC() {
 
                 <div className="bg-slate-50 p-4 rounded-lg mb-6">
                   <p className="text-sm text-slate-600 mb-3">Select Quantity</p>
-                  <PricingToggle mangoName={selectedMango.name} pricePerPound={selectedMango.pricePerPound} />
+                  <PricingToggle pricePerPound={selectedMango.pricePerPound} />
                 </div>
 
                 <button
@@ -202,6 +230,8 @@ export default function OptionC() {
             ← Back to comparison
           </a>
         </div>
+          </>
+        )}
       </main>
 
       <style jsx>{`

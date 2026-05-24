@@ -1,7 +1,7 @@
-import { Reader } from '@maxmind/geoip2-node'
+import * as geoip from '@maxmind/geoip2-node'
 import { join } from 'path'
 
-let dbInstance: Reader | null = null
+let dbInstance: Awaited<ReturnType<typeof geoip.Reader.open>> | null = null
 
 export interface GeoIPData {
   city?: string | null
@@ -9,13 +9,13 @@ export interface GeoIPData {
   country_code?: string | null
 }
 
-async function initializeDb(): Promise<Reader> {
+async function initializeDb() {
   if (dbInstance) return dbInstance
 
   const dbPath = join(process.cwd(), 'lib', 'geoip', 'GeoLite2-City.mmdb')
 
   try {
-    dbInstance = await Reader.open(dbPath)
+    dbInstance = await geoip.Reader.open(dbPath)
     return dbInstance
   } catch (error) {
     console.error(`Failed to load MaxMind database at ${dbPath}:`, error)

@@ -12,7 +12,6 @@ interface CartSidebarProps {
   onClose: () => void
   items: CartItem[]
   onRemoveItem: (itemId: string) => void
-  onUpdateQuantity: (itemId: string, quantity: number) => void
   onCheckoutComplete: (orderId: string, paymentMethod: 'zelle' | 'stripe') => void
 }
 
@@ -21,7 +20,6 @@ export function CartSidebar({
   onClose,
   items,
   onRemoveItem,
-  onUpdateQuantity,
   onCheckoutComplete,
 }: CartSidebarProps) {
   const [view, setView] = useState<SidebarView>('items')
@@ -83,7 +81,6 @@ export function CartSidebar({
               <CartItemsList
                 items={items}
                 onRemoveItem={onRemoveItem}
-                onUpdateQuantity={onUpdateQuantity}
               />
 
               {/* Subtotal */}

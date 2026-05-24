@@ -196,7 +196,7 @@ export default function Home() {
 
             <div className="bg-slate-50 p-6 rounded-lg mb-6">
               <p className="text-sm text-slate-600 mb-2">Select Your Order</p>
-              <PricingToggle mangoName={selectedMango.name} pricePerPound={selectedMango.pricePerPound} />
+              <PricingToggle pricePerPound={selectedMango.pricePerPound} />
             </div>
 
             <button
@@ -285,7 +285,6 @@ export default function Home() {
         onClose={() => setIsCartOpen(false)}
         items={cartItems}
         onRemoveItem={handleRemoveCartItem}
-        onUpdateQuantity={handleUpdateCartQuantity}
         onCheckoutComplete={handleCheckoutComplete}
       />
     </div>

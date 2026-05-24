@@ -158,12 +158,14 @@ export async function approveOrder(
       .from('fruit_orders')
       .select(
         `
+        id,
         order_status,
         stripe_payment_intent_id,
         customer_id,
         items,
         total_price,
         created_at,
+        updated_at,
         customer:customers (
           email,
           first_name,
@@ -238,11 +240,12 @@ export async function approveOrder(
     if (auditError) throw auditError
 
     // Send approval email (non-blocking - failures logged but don't fail the operation)
-    if (order.customer) {
+    const customer = Array.isArray(order.customer) ? order.customer[0] : order.customer
+    if (customer && typeof customer === 'object' && 'email' in customer) {
       const emailResult = await sendApprovalEmail(
-        order.customer.email,
+        (customer as Record<string, unknown>).email as string,
         process.env.ADMIN_EMAIL || 'admin@seasonalfruitfarm.com',
-        order as OrderWithCustomer
+        order as unknown as OrderWithCustomer
       )
       if (!emailResult.success) {
         console.warn(`Email failed for order ${orderId}: ${emailResult.error}`)
@@ -274,12 +277,14 @@ export async function rejectOrder(
       .from('fruit_orders')
       .select(
         `
+        id,
         order_status,
         stripe_payment_intent_id,
         customer_id,
         items,
         total_price,
         created_at,
+        updated_at,
         customer:customers (
           email,
           first_name,
@@ -348,11 +353,12 @@ export async function rejectOrder(
     if (auditError) throw auditError
 
     // Send cancellation email (non-blocking)
-    if (order.customer) {
+    const customer = Array.isArray(order.customer) ? order.customer[0] : order.customer
+    if (customer && typeof customer === 'object' && 'email' in customer) {
       const emailResult = await sendCancellationEmail(
-        order.customer.email,
+        (customer as Record<string, unknown>).email as string,
         process.env.ADMIN_EMAIL || 'admin@seasonalfruitfarm.com',
-        order as OrderWithCustomer,
+        order as unknown as OrderWithCustomer,
         reason
       )
       if (!emailResult.success) {

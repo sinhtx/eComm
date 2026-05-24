@@ -1,15 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { MangoVariety, CartItem } from '@/lib/types';
 import { getAvailableMangoes } from '@/lib/mangoes';
 import { PricingToggle } from '@/components/PricingToggle';
 
 export default function OptionB() {
-  const mangoes = getAvailableMangoes();
+  const [mangoes, setMangoes] = useState<MangoVariety[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedMango, setSelectedMango] = useState<MangoVariety | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  useEffect(() => {
+    const loadMangoes = async () => {
+      try {
+        setLoading(true);
+        const data = await getAvailableMangoes();
+        setMangoes(data);
+      } catch (err) {
+        console.error('Failed to load mangoes:', err);
+        setMangoes([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMangoes();
+  }, []);
 
   const handleAddToCart = (quantity: number) => {
     if (!selectedMango) return;
@@ -51,18 +69,26 @@ export default function OptionB() {
           <h2 className="text-2xl font-bold text-slate-900 mb-4">Our Premium Mangoes</h2>
           <p className="text-slate-600 mb-6">Click any mango to see details on the right →</p>
 
-          {/* Compact grid with h-40 images */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {mangoes.map((mango) => (
-              <button
-                key={mango.id}
-                onClick={() => setSelectedMango(mango)}
-                className={`group relative rounded-lg overflow-hidden transition-all ${
-                  selectedMango?.id === mango.id
-                    ? 'ring-4 ring-amber-400 shadow-lg'
-                    : 'bg-white shadow-md hover:shadow-lg hover:scale-105'
-                }`}
-              >
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-slate-600">Loading mangoes...</p>
+            </div>
+          ) : mangoes.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-slate-600">No mangoes available at the moment.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {mangoes.map((mango) => (
+                <button
+                  key={mango.id}
+                  onClick={() => setSelectedMango(mango)}
+                  className={`group relative rounded-lg overflow-hidden transition-all ${
+                    selectedMango?.id === mango.id
+                      ? 'ring-4 ring-amber-400 shadow-lg'
+                      : 'bg-white shadow-md hover:shadow-lg hover:scale-105'
+                  }`}
+                >
                 <div className="relative h-40 w-full overflow-hidden bg-slate-100">
                   <Image
                     src={mango.imageUrl}
@@ -93,7 +119,8 @@ export default function OptionB() {
                 </div>
               </button>
             ))}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* RIGHT: Sticky Detail Panel - COMPACT (50% smaller) */}
@@ -116,7 +143,7 @@ export default function OptionB() {
 
               <div className="bg-slate-50 p-2 rounded-lg mb-2">
                 <p className="text-xs text-slate-600 mb-2">Quantity</p>
-                <PricingToggle mangoName={selectedMango.name} pricePerPound={selectedMango.pricePerPound} />
+                <PricingToggle pricePerPound={selectedMango.pricePerPound} />
               </div>
 
               <button

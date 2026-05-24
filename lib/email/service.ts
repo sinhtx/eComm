@@ -12,7 +12,7 @@ interface EmailResult {
 
 function formatOrderItems(items: OrderItem[]): string {
   return items
-    .map((item) => `${item.name} x${item.quantity} @ $${item.price.toFixed(2)} = $${item.total.toFixed(2)}`)
+    .map((item) => `${item.name} x${item.quantity} @ $${(item.price || 0).toFixed(2)} = $${(item.total || 0).toFixed(2)}`)
     .join('<br />')
 }
 

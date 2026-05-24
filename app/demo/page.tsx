@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export default function DemoHub() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -92,7 +94,7 @@ export default function DemoHub() {
         <div className="mt-16 bg-amber-50 border-2 border-amber-200 rounded-lg p-8">
           <h3 className="text-xl font-bold text-slate-900 mb-4">How to Compare:</h3>
           <ol className="space-y-2 text-slate-700 list-decimal list-inside">
-            <li>Click "Try Option" to visit each demo</li>
+            <li>Click &quot;Try Option&quot; to visit each demo</li>
             <li>Click on a mango card to see the ordering experience</li>
             <li>Try adding items to the cart</li>
             <li>Resize your browser to see mobile behavior (DevTools F12)</li>
@@ -102,9 +104,9 @@ export default function DemoHub() {
 
         {/* Return Link */}
         <div className="mt-8 text-center">
-          <a href="/" className="text-slate-600 hover:text-slate-900 underline">
+          <Link href="/" className="text-slate-600 hover:text-slate-900 underline">
             ← Back to main storefront
-          </a>
+          </Link>
         </div>
       </main>
     </div>
