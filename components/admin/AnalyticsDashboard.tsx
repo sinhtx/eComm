@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabaseServer } from '@/lib/auth/supabaseClient'
+import { supabaseClient } from '@/lib/auth/supabaseClient'
 
 interface AnalyticsMetrics {
   totalOrders: number
@@ -33,7 +33,7 @@ export function AnalyticsDashboard() {
       setError(null)
 
       // Get all orders
-      const { data: allOrders, error: ordersError } = await supabaseServer
+      const { data: allOrders, error: ordersError } = await supabaseClient
         .from('fruit_orders')
         .select('*, customer:customers(state)')
 
