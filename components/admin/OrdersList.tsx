@@ -14,6 +14,9 @@ export function OrdersList() {
     auditLog: AuditLogEntry[]
   } | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
+  const [confirmApprovalOrder, setConfirmApprovalOrder] = useState<OrderWithCustomer | null>(null)
+  const [confirmRejectOrder, setConfirmRejectOrder] = useState<OrderWithCustomer | null>(null)
+  const [rejectReason, setRejectReason] = useState('')
 
   useEffect(() => {
     fetchOrders()
@@ -41,29 +44,34 @@ export function OrdersList() {
     }
   }
 
-  async function handleApprove(orderId: string) {
+  async function handleApproveConfirm(orderId: string) {
     setActionLoading(true)
     const { success, error: err } = await approveOrder(orderId)
     if (success) {
       await fetchOrders()
       setSelectedOrder(null)
       setSelectedOrderDetails(null)
+      setConfirmApprovalOrder(null)
     } else {
       setError(err || 'Failed to approve order')
     }
     setActionLoading(false)
   }
 
-  async function handleReject(orderId: string) {
-    const reason = prompt('Please enter rejection reason:')
-    if (!reason) return
+  async function handleRejectConfirm(orderId: string) {
+    if (!rejectReason.trim()) {
+      setError('Please enter a rejection reason')
+      return
+    }
 
     setActionLoading(true)
-    const { success, error: err } = await rejectOrder(orderId, reason)
+    const { success, error: err } = await rejectOrder(orderId, rejectReason)
     if (success) {
       await fetchOrders()
       setSelectedOrder(null)
       setSelectedOrderDetails(null)
+      setConfirmRejectOrder(null)
+      setRejectReason('')
     } else {
       setError(err || 'Failed to reject order')
     }
@@ -132,14 +140,14 @@ export function OrdersList() {
                       Details
                     </button>
                     <button
-                      onClick={() => handleApprove(order.id)}
+                      onClick={() => setConfirmApprovalOrder(order)}
                       disabled={actionLoading}
                       className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-3 py-1 rounded text-sm font-semibold transition-colors"
                     >
                       Approve
                     </button>
                     <button
-                      onClick={() => handleReject(order.id)}
+                      onClick={() => setConfirmRejectOrder(order)}
                       disabled={actionLoading}
                       className="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white px-3 py-1 rounded text-sm font-semibold transition-colors"
                     >
@@ -164,14 +172,80 @@ export function OrdersList() {
         <OrderDetailModal
           order={selectedOrderDetails.order}
           auditLog={selectedOrderDetails.auditLog}
-          onApprove={() => handleApprove(selectedOrder.id)}
-          onReject={() => handleReject(selectedOrder.id)}
+          onApprove={() => setConfirmApprovalOrder(selectedOrder)}
+          onReject={() => setConfirmRejectOrder(selectedOrder)}
           onClose={() => {
             setSelectedOrder(null)
             setSelectedOrderDetails(null)
           }}
           loading={actionLoading}
         />
+      )}
+
+      {/* Approval Confirmation Dialog */}
+      {confirmApprovalOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md">
+            <h3 className="text-lg font-bold text-slate-900 mb-4">Confirm Approval</h3>
+            <p className="text-slate-600 mb-6">
+              Capture ${confirmApprovalOrder.total_price.toFixed(2)} for this order?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmApprovalOrder(null)}
+                className="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-900 font-semibold py-2 px-4 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleApproveConfirm(confirmApprovalOrder.id)}
+                disabled={actionLoading}
+                className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-semibold py-2 px-4 rounded-lg"
+              >
+                {actionLoading ? 'Capturing...' : 'Confirm'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rejection Dialog with Reason Input */}
+      {confirmRejectOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md">
+            <h3 className="text-lg font-bold text-slate-900 mb-4">Reject Order</h3>
+            <p className="text-slate-600 mb-4">Enter reason for rejection:</p>
+            <input
+              type="text"
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="e.g., Out of stock, Customer requested"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg mb-6 text-slate-900"
+              disabled={actionLoading}
+            />
+            <p className="text-slate-600 mb-6 text-sm">
+              Customer will be notified of this reason.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setConfirmRejectOrder(null)
+                  setRejectReason('')
+                }}
+                className="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-900 font-semibold py-2 px-4 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleRejectConfirm(confirmRejectOrder.id)}
+                disabled={actionLoading || !rejectReason.trim()}
+                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-semibold py-2 px-4 rounded-lg"
+              >
+                {actionLoading ? 'Processing...' : 'Confirm Rejection'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
