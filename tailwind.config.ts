@@ -18,6 +18,9 @@ const config: Config = {
         // Neutral Light
         'neutral-cream': '#FFFEF7',
         'neutral-off-white': '#F9F7F4',
+        // Neutral Dark
+        'neutral-charcoal': '#2C2C2C',
+        'neutral-gray': '#666666',
         // Text
         'text-dark': '#2C2C2C',
         'text-medium': '#666666',
