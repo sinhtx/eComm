@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { OrdersList } from '@/components/admin/OrdersList'
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard'
+import Link from 'next/link'
 
 type TabType = 'orders' | 'analytics'
 
@@ -33,6 +34,13 @@ export default function AdminDashboard() {
               {tab.label}
             </button>
           ))}
+          <Link
+            href="/admin/fruits"
+            className="px-1 py-4 font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition-colors whitespace-nowrap"
+          >
+            <span className="mr-2">🥭</span>
+            Fruits
+          </Link>
         </div>
       </div>
 

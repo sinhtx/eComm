@@ -71,3 +71,53 @@ export interface Order {
   createdAt: string;
   updatedAt: string;
 }
+
+// Admin Fruit Management Types
+export interface Fruit {
+  id: string;
+  name: string;
+  description: string;
+  price_per_pound: number;
+  available: boolean;
+  in_season: boolean;
+  coming_soon_date: string | null;
+  current_image_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MangoImage {
+  id: string;
+  mango_id: string;
+  storage_path: string;
+  file_name: string;
+  uploaded_at: string;
+  deleted_at: string | null;
+}
+
+export interface FruitWithImage extends Fruit {
+  current_image?: {
+    id: string;
+    storage_path: string;
+    file_name: string;
+    imageUrl: string;
+  };
+}
+
+export interface CreateFruitInput {
+  name: string;
+  description: string;
+  price_per_pound: number;
+  available: boolean;
+  in_season: boolean;
+  coming_soon_date?: string;
+}
+
+export interface UpdateFruitInput {
+  name?: string;
+  description?: string;
+  price_per_pound?: number;
+  available?: boolean;
+  in_season?: boolean;
+  coming_soon_date?: string | null;
+}
