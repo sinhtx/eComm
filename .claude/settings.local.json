@@ -14,7 +14,9 @@
       "Bash(npx tsc *)",
       "Bash(npx eslint *)",
       "Bash(pkill -f \"next dev\")",
-      "Bash(kill %1)"
+      "Bash(kill %1)",
+      "Bash(pkill -f \"npm run dev\")",
+      "Bash(curl -s http://localhost:3000/admin)"
     ]
   }
 }

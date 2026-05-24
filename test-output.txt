@@ -1,0 +1,58 @@
+
+> seasonal-farm@0.1.0 test
+> jest adminOrders.test.ts
+
+  console.error
+    Failed to fetch pending orders: Error: Database error
+        at Object.<anonymous> (C:\Users\v433521\myProject\eComm\__tests__\app\actions\adminOrders.test.ts:59:25)
+        at Promise.then.completed (C:\Users\v433521\myProject\eComm\node_modules\jest-circus\build\utils.js:298:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (C:\Users\v433521\myProject\eComm\node_modules\jest-circus\build\utils.js:231:10)
+        at _callCircusTest (C:\Users\v433521\myProject\eComm\node_modules\jest-circus\build\run.js:316:40)
+        at async _runTest (C:\Users\v433521\myProject\eComm\node_modules\jest-circus\build\run.js:252:3)
+        at async _runTestsForDescribeBlock (C:\Users\v433521\myProject\eComm\node_modules\jest-circus\build\run.js:126:9)
+        at async _runTestsForDescribeBlock (C:\Users\v433521\myProject\eComm\node_modules\jest-circus\build\run.js:121:9)
+        at async _runTestsForDescribeBlock (C:\Users\v433521\myProject\eComm\node_modules\jest-circus\build\run.js:121:9)
+        at async run (C:\Users\v433521\myProject\eComm\node_modules\jest-circus\build\run.js:71:3)
+        at async runAndTransformResultsToJestFormat (C:\Users\v433521\myProject\eComm\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:122:21)
+        at async jestAdapter (C:\Users\v433521\myProject\eComm\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:79:19)
+        at async runTestInternal (C:\Users\v433521\myProject\eComm\node_modules\jest-runner\build\runTest.js:367:16)
+        at async runTest (C:\Users\v433521\myProject\eComm\node_modules\jest-runner\build\runTest.js:444:34)
+
+    [0m [90m 61 |[39m         [32m`[39m
+     [90m 62 |[39m [32m        id,[39m
+    [31m[1m>[22m[39m[90m 63 |[39m [32m        customer_id,[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 64 |[39m [32m        order_status,[39m
+     [90m 65 |[39m [32m        items,[39m
+     [90m 66 |[39m [32m        total_price,[39m[0m
+
+      at getPendingOrders (app/actions/adminOrders.ts:63:17)
+      at async Object.<anonymous> (__tests__/app/actions/adminOrders.test.ts:69:37)
+
+(node:18232) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS __tests__/app/actions/adminOrders.test.ts
+  Admin Orders Server Actions (Part 4 - Admin Dashboard)
+    getPendingOrders
+      √ should fetch pending orders with customer details (5 ms)
+      √ should handle errors gracefully (29 ms)
+    approveOrder
+      √ should approve an order and create audit log (1 ms)
+      √ should return error if order is not pending (1 ms)
+      √ should capture Stripe payment when approving order (1 ms)
+      √ should update order status to approved after successful Stripe capture (1 ms)
+      √ should send approval email after order status update (1 ms)
+      √ should return error if Stripe capture fails
+    rejectOrder
+      √ should reject an order and create audit log
+      √ should cancel Stripe payment when rejecting order with payment intent
+      √ should send cancellation email after rejecting order (1 ms)
+      √ should return error if Stripe cancel fails (1 ms)
+      √ should return error if order is not pending (1 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       13 passed, 13 total
+Snapshots:   0 total
+Time:        4.918 s
+Ran all test suites matching /adminOrders.test.ts/i.

@@ -28,7 +28,7 @@ const { stripe } = require('@/lib/stripe/server')
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { sendApprovalEmail, sendCancellationEmail } = require('@/lib/email/service')
 
-import { approveOrder, rejectOrder, type OrderWithCustomer } from '@/app/actions/adminOrders'
+import { approveOrder, rejectOrder } from '@/app/actions/adminOrders'
 
 describe('Order Approval Workflow Integration', () => {
   beforeEach(() => {
