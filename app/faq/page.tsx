@@ -106,9 +106,9 @@ export default function FAQPage() {
         </div>
 
         <div className="mt-12 p-8 bg-primary-yellow bg-opacity-10 border-l-4 border-primary-yellow rounded">
-          <h3 className="text-h3 mb-2 text-neutral-charcoal">Didn't find your answer?</h3>
+          <h3 className="text-h3 mb-2 text-neutral-charcoal">{`Didn't find your answer?`}</h3>
           <p className="text-neutral-gray mb-4">
-            Have a question that isn't answered here? We'd love to hear from you!
+            {`Have a question that isn't answered here? We'd love to hear from you!`}
           </p>
           <a href="/contact" className="inline-block px-6 py-2 bg-primary-yellow hover:bg-primary-orange text-neutral-charcoal font-semibold rounded-lg transition-colors">
             Contact Us

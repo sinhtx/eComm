@@ -1,7 +1,5 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
 import { useAdminAuth } from '@/lib/auth/useAdminAuth'
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect } from 'react'

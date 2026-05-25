@@ -25,11 +25,13 @@ export async function logTraffic(pageData?: {
     // Resolve geolocation data
     const geo = await resolveGeoIP(ip)
 
-    // Create Supabase client with secret key (server-side only)
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-      process.env.SUPABASE_SECRET_KEY || ''
-    )
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const secret = process.env.SUPABASE_SECRET_KEY
+    if (!url || !secret) {
+      return { success: false, error: 'Supabase server env not configured' }
+    }
+
+    const supabase = createClient(url, secret)
 
     // Insert into site_traffic table
     const { error } = await supabase.from('site_traffic').insert({

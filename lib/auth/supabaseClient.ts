@@ -1,9 +1,9 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-let supabaseClientInstance: any = null
-let supabaseServerInstance: any = null
+let supabaseClientInstance: SupabaseClient | null = null
+let supabaseServerInstance: SupabaseClient | null = null
 
-function getSupabaseClient() {
+function getSupabaseClient(): SupabaseClient {
   if (!supabaseClientInstance) {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL
     const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
@@ -19,7 +19,7 @@ function getSupabaseClient() {
   return supabaseClientInstance
 }
 
-function getSupabaseServer() {
+function getSupabaseServer(): SupabaseClient {
   if (!supabaseServerInstance) {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL
     const key = process.env.SUPABASE_SECRET_KEY
@@ -39,22 +39,16 @@ function getSupabaseServer() {
 export { getSupabaseClient, getSupabaseServer }
 
 // Lazy getters - initialize only when accessed
-export const supabaseClient = new Proxy(
-  {},
-  {
-    get: (target, prop: string) => {
-      const client = getSupabaseClient()
-      return (client as any)[prop]
-    },
-  }
-) as any
+export const supabaseClient = new Proxy({} as SupabaseClient, {
+  get(_target, prop: string | symbol) {
+    const client = getSupabaseClient()
+    return Reflect.get(client as unknown as Record<string | symbol, unknown>, prop)
+  },
+}) as SupabaseClient
 
-export const supabaseServer = new Proxy(
-  {},
-  {
-    get: (target, prop: string) => {
-      const client = getSupabaseServer()
-      return (client as any)[prop]
-    },
-  }
-) as any
+export const supabaseServer = new Proxy({} as SupabaseClient, {
+  get(_target, prop: string | symbol) {
+    const client = getSupabaseServer()
+    return Reflect.get(client as unknown as Record<string | symbol, unknown>, prop)
+  },
+}) as SupabaseClient
