@@ -140,10 +140,10 @@ export async function getFruits(): Promise<{
     }
   } catch (error) {
     console.error('Failed to fetch fruits:', error)
-    return {
-      data: [],
-      error: error instanceof Error ? error.message : 'Failed to fetch fruits',
-    }
+    const msg = error instanceof Error
+      ? error.message
+      : (error as { message?: string })?.message ?? 'Failed to fetch fruits'
+    return { data: [], error: msg }
   }
 }
 
