@@ -3,32 +3,47 @@ import { createClient } from '@supabase/supabase-js'
 let supabaseClientInstance: ReturnType<typeof createClient> | null = null
 let supabaseServerInstance: ReturnType<typeof createClient> | null = null
 
-// Only create clients if keys are available (safe for build time)
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-const secretKey = process.env.SUPABASE_SECRET_KEY
+// Lazy initialization - creates client on first access, not at module load time
+export const supabaseClient = new Proxy(
+  {},
+  {
+    get: (target, prop) => {
+      if (!supabaseClientInstance) {
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 
-try {
-  if (url && publishableKey) {
-    supabaseClientInstance = createClient(url, publishableKey)
+        if (!url || !key) {
+          throw new Error(
+            'Supabase client key missing. Make sure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY are set.'
+          )
+        }
+
+        supabaseClientInstance = createClient(url, key)
+      }
+
+      return (supabaseClientInstance as any)[prop]
+    },
   }
-} catch (e) {
-  console.warn('Failed to initialize Supabase client:', e)
-}
+) as ReturnType<typeof createClient>
 
-try {
-  if (url && secretKey) {
-    supabaseServerInstance = createClient(url, secretKey)
+export const supabaseServer = new Proxy(
+  {},
+  {
+    get: (target, prop) => {
+      if (!supabaseServerInstance) {
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const key = process.env.SUPABASE_SECRET_KEY
+
+        if (!url || !key) {
+          throw new Error(
+            'Supabase server key missing. Make sure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SECRET_KEY are set.'
+          )
+        }
+
+        supabaseServerInstance = createClient(url, key)
+      }
+
+      return (supabaseServerInstance as any)[prop]
+    },
   }
-} catch (e) {
-  console.warn('Failed to initialize Supabase server:', e)
-}
-
-// Export with fallback - will use dummy client if env vars missing at build time
-export const supabaseClient =
-  supabaseClientInstance ||
-  createClient('https://dummy.supabase.co', 'dummy-key')
-
-export const supabaseServer =
-  supabaseServerInstance ||
-  createClient('https://dummy.supabase.co', 'dummy-key')
+) as ReturnType<typeof createClient>
