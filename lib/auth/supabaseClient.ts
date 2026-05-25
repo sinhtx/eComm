@@ -9,8 +9,9 @@ function getSupabaseClient() {
     const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 
     if (!url || !key) {
-      console.warn('Supabase client not initialized - keys missing')
-      return null
+      throw new Error(
+        'Supabase client not initialized. Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY'
+      )
     }
 
     supabaseClientInstance = createClient(url, key)
@@ -24,8 +25,9 @@ function getSupabaseServer() {
     const key = process.env.SUPABASE_SECRET_KEY
 
     if (!url || !key) {
-      console.warn('Supabase server not initialized - keys missing')
-      return null
+      throw new Error(
+        'Supabase server not initialized. Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SECRET_KEY'
+      )
     }
 
     supabaseServerInstance = createClient(url, key)
@@ -33,33 +35,26 @@ function getSupabaseServer() {
   return supabaseServerInstance
 }
 
-// Lazy getters - initialize only when accessed
-export const supabaseClient = {
-  get auth() {
-    return getSupabaseClient()?.auth
-  },
-  get storage() {
-    return getSupabaseClient()?.storage
-  },
-  get rpc() {
-    return getSupabaseClient()?.rpc
-  },
-  from(table: string): any {
-    return getSupabaseClient()?.from(table)
-  },
-} as any
+// Export functions for direct use
+export { getSupabaseClient, getSupabaseServer }
 
-export const supabaseServer = {
-  get auth() {
-    return getSupabaseServer()?.auth
-  },
-  get storage() {
-    return getSupabaseServer()?.storage
-  },
-  get rpc() {
-    return getSupabaseServer()?.rpc
-  },
-  from(table: string): any {
-    return getSupabaseServer()?.from(table)
-  },
-} as any
+// Lazy getters - initialize only when accessed
+export const supabaseClient = new Proxy(
+  {},
+  {
+    get: (target, prop: string) => {
+      const client = getSupabaseClient()
+      return (client as any)[prop]
+    },
+  }
+) as any
+
+export const supabaseServer = new Proxy(
+  {},
+  {
+    get: (target, prop: string) => {
+      const client = getSupabaseServer()
+      return (client as any)[prop]
+    },
+  }
+) as any
