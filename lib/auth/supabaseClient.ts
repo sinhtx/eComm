@@ -44,7 +44,7 @@ export const supabaseClient = {
   get rpc() {
     return getSupabaseClient()?.rpc
   },
-  from(table: string) {
+  from(table: string): any {
     return getSupabaseClient()?.from(table)
   },
 } as any
@@ -59,7 +59,7 @@ export const supabaseServer = {
   get rpc() {
     return getSupabaseServer()?.rpc
   },
-  from(table: string) {
+  from(table: string): any {
     return getSupabaseServer()?.from(table)
   },
 } as any

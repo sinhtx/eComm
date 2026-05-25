@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabaseClient } from './supabaseClient'
-import type { User } from '@supabase/supabase-js'
+import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js'
 
 export function useAdminAuth() {
   const [user, setUser] = useState<User | null>(null)
@@ -33,7 +33,7 @@ export function useAdminAuth() {
 
     // Listen for auth state changes
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(
-      (event, session) => {
+      (event: AuthChangeEvent, session: Session | null) => {
         setUser(session?.user ?? null)
         if (session?.user) {
           setError(null)
