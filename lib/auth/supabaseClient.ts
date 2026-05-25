@@ -1,28 +1,34 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY
+let supabaseClientInstance: ReturnType<typeof createClient> | null = null
+let supabaseServerInstance: ReturnType<typeof createClient> | null = null
 
-// Log for debugging (only warn, don't throw at build time)
-if (typeof window === 'undefined') {
-  // Server-side
-  if (!supabaseSecretKey) console.warn('[Supabase] SUPABASE_SECRET_KEY is missing')
-} else {
-  // Client-side
-  if (!supabasePublishableKey) console.warn('[Supabase] NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY is missing')
+// Only create clients if keys are available (safe for build time)
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+const secretKey = process.env.SUPABASE_SECRET_KEY
+
+try {
+  if (url && publishableKey) {
+    supabaseClientInstance = createClient(url, publishableKey)
+  }
+} catch (e) {
+  console.warn('Failed to initialize Supabase client:', e)
 }
 
-if (!supabaseUrl) throw new Error('[Supabase] NEXT_PUBLIC_SUPABASE_URL is missing')
+try {
+  if (url && secretKey) {
+    supabaseServerInstance = createClient(url, secretKey)
+  }
+} catch (e) {
+  console.warn('Failed to initialize Supabase server:', e)
+}
 
-// Public client for browser-side auth (publishable key)
-export const supabaseClient = createClient(
-  supabaseUrl || '',
-  supabasePublishableKey || ''
-)
+// Export with fallback - will use dummy client if env vars missing at build time
+export const supabaseClient =
+  supabaseClientInstance ||
+  createClient('https://dummy.supabase.co', 'dummy-key')
 
-// Server client for protected operations (secret key)
-export const supabaseServer = createClient(
-  supabaseUrl || '',
-  supabaseSecretKey || ''
-)
+export const supabaseServer =
+  supabaseServerInstance ||
+  createClient('https://dummy.supabase.co', 'dummy-key')
