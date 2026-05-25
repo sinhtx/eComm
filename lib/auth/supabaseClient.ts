@@ -1,49 +1,65 @@
 import { createClient } from '@supabase/supabase-js'
 
-let supabaseClientInstance: ReturnType<typeof createClient> | null = null
-let supabaseServerInstance: ReturnType<typeof createClient> | null = null
+let supabaseClientInstance: any = null
+let supabaseServerInstance: any = null
 
-// Lazy initialization - creates client on first access, not at module load time
-export const supabaseClient = new Proxy(
-  {},
-  {
-    get: (target, prop) => {
-      if (!supabaseClientInstance) {
-        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-        const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+function getSupabaseClient() {
+  if (!supabaseClientInstance) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 
-        if (!url || !key) {
-          throw new Error(
-            'Supabase client key missing. Make sure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY are set.'
-          )
-        }
+    if (!url || !key) {
+      console.warn('Supabase client not initialized - keys missing')
+      return null
+    }
 
-        supabaseClientInstance = createClient(url, key)
-      }
-
-      return (supabaseClientInstance as any)[prop]
-    },
+    supabaseClientInstance = createClient(url, key)
   }
-) as ReturnType<typeof createClient>
+  return supabaseClientInstance
+}
 
-export const supabaseServer = new Proxy(
-  {},
-  {
-    get: (target, prop) => {
-      if (!supabaseServerInstance) {
-        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-        const key = process.env.SUPABASE_SECRET_KEY
+function getSupabaseServer() {
+  if (!supabaseServerInstance) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const key = process.env.SUPABASE_SECRET_KEY
 
-        if (!url || !key) {
-          throw new Error(
-            'Supabase server key missing. Make sure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SECRET_KEY are set.'
-          )
-        }
+    if (!url || !key) {
+      console.warn('Supabase server not initialized - keys missing')
+      return null
+    }
 
-        supabaseServerInstance = createClient(url, key)
-      }
-
-      return (supabaseServerInstance as any)[prop]
-    },
+    supabaseServerInstance = createClient(url, key)
   }
-) as ReturnType<typeof createClient>
+  return supabaseServerInstance
+}
+
+// Lazy getters - initialize only when accessed
+export const supabaseClient = {
+  get auth() {
+    return getSupabaseClient()?.auth
+  },
+  get storage() {
+    return getSupabaseClient()?.storage
+  },
+  get rpc() {
+    return getSupabaseClient()?.rpc
+  },
+  from(table: string) {
+    return getSupabaseClient()?.from(table)
+  },
+} as any
+
+export const supabaseServer = {
+  get auth() {
+    return getSupabaseServer()?.auth
+  },
+  get storage() {
+    return getSupabaseServer()?.storage
+  },
+  get rpc() {
+    return getSupabaseServer()?.rpc
+  },
+  from(table: string) {
+    return getSupabaseServer()?.from(table)
+  },
+} as any
