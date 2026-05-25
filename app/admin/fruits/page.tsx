@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import { FruitsTable } from '@/components/admin/FruitsTable'
 import { EditFruitModal } from '@/components/admin/EditFruitModal'
