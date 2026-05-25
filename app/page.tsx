@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { HeroSection } from '@/components/HeroSection'
 import { ProductCard } from '@/components/ProductCard'
 import { StoryBeat } from '@/components/StoryBeat'
@@ -103,12 +104,9 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-12">
-            <a
-              href="/shop"
-              className="btn-primary inline-block"
-            >
+            <Link href="/shop" className="btn-primary inline-block">
               View All Varieties
-            </a>
+            </Link>
           </div>
         </div>
       </section>

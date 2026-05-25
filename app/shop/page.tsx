@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { getAllMangoes } from '@/lib/mangoes'
-import { CartSidebar } from '@/components/CartSidebar'
-import { CartItem } from '@/lib/types'
+import { useCart } from '@/components/CartProvider'
 import type { MangoVariety } from '@/lib/types'
 
 type FilterType = 'all' | 'in-season' | 'coming-soon'
@@ -12,9 +11,8 @@ type FilterType = 'all' | 'in-season' | 'coming-soon'
 export default function ShopPage() {
   const [mangoes, setMangoes] = useState<Array<{ variety: MangoVariety; comingSoonDate: string | null }>>([])
   const [filter, setFilter] = useState<FilterType>('all')
-  const [cart, setCart] = useState<CartItem[]>([])
-  const [isCartOpen, setIsCartOpen] = useState(false)
   const [loading, setLoading] = useState(true)
+  const { openCart, addMangoToCart } = useCart()
 
   useEffect(() => {
     const loadMangoes = async () => {
@@ -40,36 +38,8 @@ export default function ShopPage() {
   })
 
   const handleAddToCart = (mango: MangoVariety) => {
-    setCart((prevCart) => {
-      const existing = prevCart.find((item) => item.id === mango.id)
-      if (existing) {
-        return prevCart.map((item) =>
-          item.id === mango.id
-            ? { ...item, quantity: item.quantity + 1, total: (item.quantity + 1) * item.pricePerUnit }
-            : item
-        )
-      }
-      return [
-        ...prevCart,
-        {
-          id: mango.id,
-          name: mango.name,
-          type: 'mango',
-          quantity: 1,
-          pricePerUnit: mango.pricePerPound,
-          total: mango.pricePerPound,
-        },
-      ]
-    })
-  }
-
-  const handleRemoveItem = (itemId: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== itemId))
-  }
-
-  const handleCheckoutComplete = () => {
-    setCart([])
-    setIsCartOpen(false)
+    addMangoToCart(mango)
+    openCart()
   }
 
   if (loading) {
@@ -92,8 +62,8 @@ export default function ShopPage() {
 
       {/* Filter & Cart Button */}
       <section className="max-w-6xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+          <div className="flex flex-wrap gap-4">
             <button
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
@@ -125,17 +95,6 @@ export default function ShopPage() {
               Coming Soon
             </button>
           </div>
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="relative bg-primary-yellow hover:bg-primary-orange text-neutral-charcoal font-semibold py-2 px-6 rounded-lg transition-colors"
-          >
-            🛒 Cart
-            {cart.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-accent-pink text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                {cart.length}
-              </span>
-            )}
-          </button>
         </div>
 
         {/* Results Count */}
@@ -213,15 +172,6 @@ export default function ShopPage() {
           </div>
         )}
       </section>
-
-      {/* Cart Sidebar */}
-      <CartSidebar
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        items={cart}
-        onRemoveItem={handleRemoveItem}
-        onCheckoutComplete={handleCheckoutComplete}
-      />
     </div>
   )
 }

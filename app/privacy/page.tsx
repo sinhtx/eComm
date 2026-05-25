@@ -9,14 +9,16 @@ export default function PrivacyPage() {
         <div className="prose max-w-none space-y-6 text-neutral-charcoal">
           <section>
             <h2 className="text-h2 mb-4">1. Introduction</h2>
-            <p>Mango Tango Farm ("we" or "us" or "our") operates the www.flmango.com website (the "Service"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data.</p>
+            <p>
+              {`Mango Tango Farm ("we" or "us" or "our") operates the www.flmango.com website (the "Service"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data.`}
+            </p>
           </section>
 
           <section>
             <h2 className="text-h2 mb-4">2. Information Collection and Use</h2>
             <p>We collect several different types of information for various purposes to provide and improve our Service to you:</p>
             <ul className="list-disc list-inside space-y-2 ml-4">
-              <li><strong>Personal Data:</strong> While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you ("Personal Data"). This may include, but is not limited to:
+              <li><strong>Personal Data:</strong> While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you (&quot;Personal Data&quot;). This may include, but is not limited to:
                 <ul className="list-circle list-inside space-y-1 ml-8 mt-2">
                   <li>Email address</li>
                   <li>First name and last name</li>
