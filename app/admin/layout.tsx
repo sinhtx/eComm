@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useAdminAuth } from '@/lib/auth/useAdminAuth'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 import { supabaseClient } from '@/lib/auth/supabaseClient'
 
@@ -14,12 +14,13 @@ export default function AdminLayout({
 }) {
   const { user, loading } = useAdminAuth()
   const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && !pathname.includes('/login')) {
       router.push('/admin/login')
     }
-  }, [user, loading, router])
+  }, [user, loading, router, pathname])
 
   if (loading) {
     return (
@@ -30,6 +31,11 @@ export default function AdminLayout({
         </div>
       </div>
     )
+  }
+
+  // Allow login page to render without authentication
+  if (pathname.includes('/login')) {
+    return children
   }
 
   if (!user) {
