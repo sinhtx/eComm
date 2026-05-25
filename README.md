@@ -1,5 +1,10 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Project docs
+
+- **[UI layout map](docs/UI-LAYOUT.md)** — routes, global shell, component names (use this when working with AI).
+- **[Implementation plan](docs/PLAN.md)** — phased checklist for the storefront.
+
 ## Getting Started
 
 First, run the development server:
