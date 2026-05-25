@@ -102,7 +102,7 @@ export async function getFruits(): Promise<{
         )
       `
       )
-      .or('available.eq.true,coming_soon_date.is.not.null')
+      .or('available.eq.true,coming_soon_date.not.is.null')
       .order('name', { ascending: true })
 
     if (error) throw error
