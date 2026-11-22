@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // Extract visitor IP from various header sources
   // Priority: x-forwarded-for > x-real-ip > unknown
   const ip =
@@ -22,7 +22,7 @@ export function middleware(request: NextRequest) {
   })
 }
 
-// Configure which routes the middleware should run on
+// Configure which routes the proxy should run on
 // Skip static files, images, and other assets
 export const config = {
   matcher: [

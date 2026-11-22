@@ -11,6 +11,8 @@ import { Testimonials } from '@/components/TestimonialCard'
 import { NewsletterSignup } from '@/components/NewsletterSignup'
 import { getAvailableMangoes, getAllMangoes } from '@/lib/mangoes'
 import { testimonials } from '@/lib/constants/testimonials'
+import { BRAND_NAME } from '@/lib/site'
+import { getSeasonRangeLabel } from '@/lib/season'
 import type { MangoVariety } from '@/lib/types'
 
 export default function Home() {
@@ -50,7 +52,7 @@ export default function Home() {
   const valueProps = [
     {
       icon: '🌱',
-      title: 'Organic Philosophy',
+      title: 'Naturally Grown',
       description:
         'Grown without formal certification, but with the same rigorous standards we\'d use for our own family.',
     },
@@ -74,7 +76,7 @@ export default function Home() {
       <HeroSection
         backgroundImage="/images/hero-mango-field.jpg"
         headline="Fresh Mangoes from Pine Island, SW Florida"
-        subheading="Picked at peak ripeness. Organic. Small-batch."
+        subheading="Picked at peak ripeness. Naturally grown Florida mangoes. Small-batch."
         ctaText="Shop Now"
         ctaLink="/shop"
         height="tall"
@@ -88,7 +90,7 @@ export default function Home() {
               Our Premium Mangoes
             </h2>
             <p className="text-lg text-neutral-gray">
-              Hand-picked varieties in season now
+              {getSeasonRangeLabel()}
             </p>
           </div>
 
@@ -114,8 +116,8 @@ export default function Home() {
       {/* Section 3: Meet the Farmer */}
       <StoryBeat
         title="From Philadelphia to Pine Island"
-        subtitle="How a passion for mangoes led to organic farming in SW Florida"
-        body="After 20+ years in tech, I followed my dream to southwest Florida to take over Mango Tango Farm. What started as a passion project has become a mission to grow the most delicious, organic mangoes while supporting our community through resilience and sustainable practices."
+        subtitle="How a passion for mangoes led to a farm in SW Florida"
+        body={`After 20+ years in tech, I followed my dream to southwest Florida to take over ${BRAND_NAME}. What started as a passion project has become a mission to grow the most delicious, naturally grown Florida mangoes while supporting our community through resilience and sustainable practices.`}
         imageUrl="/images/farmer-in-field.jpg"
         imageAlt="Farmer at work"
         ctaText="Read My Full Story"
@@ -134,7 +136,7 @@ export default function Home() {
         <SeasonalHighlight
           mangoName={selectedMango.name}
           story={selectedMango.description}
-          availabilityText="Available June - August 2026"
+          availabilityText={getSeasonRangeLabel()}
           imageUrl={selectedMango.imageUrl}
           ctaLink="/shop"
         />

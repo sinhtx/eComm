@@ -1,6 +1,8 @@
 'use client'
 
 import { ContactForm } from '@/components/ContactForm'
+import { SocialLinks } from '@/components/SocialLinks'
+import { BRAND_NAME, hasSocialLinks } from '@/lib/site'
 
 export default function ContactPage() {
   return (
@@ -36,7 +38,7 @@ export default function ContactPage() {
                   📍 Our Farm
                 </h3>
                 <p className="text-body text-neutral-gray">
-                  Mango Tango Farm <br /> Pine Island, FL 33922
+                  {BRAND_NAME} <br /> Pine Island, FL 33922
                 </p>
               </div>
 
@@ -64,30 +66,17 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              {/* Social */}
-              <div>
-                <h3 className="text-h3 mb-2 text-neutral-charcoal">
-                  🌐 Follow Us
-                </h3>
-                <div className="flex gap-4">
-                  <a
-                    href="https://instagram.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary-yellow hover:text-primary-orange font-semibold"
-                  >
-                    Instagram
-                  </a>
-                  <a
-                    href="https://facebook.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary-yellow hover:text-primary-orange font-semibold"
-                  >
-                    Facebook
-                  </a>
+              {hasSocialLinks() ? (
+                <div>
+                  <h3 className="text-h3 mb-2 text-neutral-charcoal">
+                    🌐 Follow Us
+                  </h3>
+                  <SocialLinks
+                    className="flex gap-4"
+                    linkClassName="text-primary-yellow hover:text-primary-orange font-semibold"
+                  />
                 </div>
-              </div>
+              ) : null}
 
               {/* Special Note */}
               <div className="bg-primary-yellow/10 border-l-4 border-primary-yellow p-4 rounded">

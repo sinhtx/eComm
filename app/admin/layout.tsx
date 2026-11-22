@@ -4,6 +4,7 @@ import { useAdminAuth } from '@/lib/auth/useAdminAuth'
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 import { supabaseClient } from '@/lib/auth/supabaseClient'
+import { BRAND_NAME } from '@/lib/site'
 
 export default function AdminLayout({
   children,
@@ -51,7 +52,7 @@ export default function AdminLayout({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard</h1>
-            <p className="text-sm text-slate-500">Seasonal Fruit Farm</p>
+            <p className="text-sm text-slate-500">{BRAND_NAME}</p>
           </div>
           <div className="flex items-center gap-6">
             <div className="text-right">

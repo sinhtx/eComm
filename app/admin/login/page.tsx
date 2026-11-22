@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState } from 'react'
 import { supabaseClient } from '@/lib/auth/supabaseClient'
+import { BRAND_NAME } from '@/lib/site'
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('')
@@ -50,7 +51,7 @@ export default function AdminLogin() {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900">Admin Login</h1>
-          <p className="text-slate-600 mt-2">Seasonal Fruit Farm Dashboard</p>
+          <p className="text-slate-600 mt-2">{BRAND_NAME} Dashboard</p>
         </div>
 
         <form onSubmit={handleSignIn} className="space-y-4">

@@ -1,8 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
 import { MangoVariety, CartItem } from '@/lib/types';
+import { MangoImage } from '@/components/MangoImage';
+import { SeasonBadge } from '@/components/SeasonBadge';
+import { BRAND_NAME } from '@/lib/site';
+import { VARIETY_IMAGE_SIZES, varietyImageAlt } from '@/lib/mangoImages';
+import { getSeasonBadge } from '@/lib/season';
 import { getAvailableMangoes } from '@/lib/mangoes';
 import { PricingToggle } from '@/components/PricingToggle';
 
@@ -60,7 +64,7 @@ export default function OptionC() {
       <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Seasonal Fruit Farm</h1>
+            <h1 className="text-2xl font-bold text-slate-900">{BRAND_NAME}</h1>
             <p className="text-sm text-slate-600">Option C: Carousel Layout</p>
           </div>
           <button className="relative bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
@@ -120,25 +124,17 @@ export default function OptionC() {
                       height: idx === selectedIndex ? '200px' : '160px',
                     }}
                   >
-                    <Image
+                    <MangoImage
                       src={mango.imageUrl}
-                      alt={mango.name}
+                      alt={varietyImageAlt(mango.name)}
                       fill
+                      sizes={VARIETY_IMAGE_SIZES}
                       className="object-cover"
-                      onError={(e) => {
-                        const img = e.target as HTMLImageElement;
-                        img.src =
-                          'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23e2e8f0" width="200" height="200"/%3E%3Ctext x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23cbd5e1" font-size="12"%3E' +
-                          encodeURIComponent(mango.name) +
-                          '%3C/text%3E%3C/svg%3E';
-                      }}
                     />
 
-                    {mango.inSeason && (
-                      <div className="absolute top-2 right-2 bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                        In Season
-                      </div>
-                    )}
+                    <div className="absolute top-2 right-2 left-2 flex justify-end">
+                      <SeasonBadge inSeason={mango.inSeason} />
+                    </div>
                   </button>
                 ))}
               </div>
@@ -162,18 +158,12 @@ export default function OptionC() {
               {/* Left: Large image */}
               <div className="flex flex-col items-center">
                 <div className="relative w-full h-80 bg-slate-100 rounded-lg overflow-hidden mb-4">
-                  <Image
+                  <MangoImage
                     src={selectedMango.imageUrl}
-                    alt={selectedMango.name}
+                    alt={varietyImageAlt(selectedMango.name)}
                     fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover"
-                    onError={(e) => {
-                      const img = e.target as HTMLImageElement;
-                      img.src =
-                        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23e2e8f0" width="400" height="400"/%3E%3Ctext x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23cbd5e1" font-size="20"%3E' +
-                        encodeURIComponent(selectedMango.name) +
-                        '%3C/text%3E%3C/svg%3E';
-                    }}
                   />
                 </div>
               </div>
@@ -183,11 +173,13 @@ export default function OptionC() {
                 <h3 className="text-3xl font-bold text-slate-900 mb-2">{selectedMango.name}</h3>
                 <p className="text-slate-600 text-lg mb-4">{selectedMango.description}</p>
 
-                {selectedMango.inSeason && (
+                {getSeasonBadge(selectedMango.inSeason) ? (
                   <div className="bg-green-50 border-l-4 border-green-500 p-3 mb-4">
-                    <p className="font-semibold text-green-900">✓ In Season - Peak Freshness!</p>
+                    <p className="font-semibold text-green-900">
+                      {getSeasonBadge(selectedMango.inSeason)}
+                    </p>
                   </div>
-                )}
+                ) : null}
 
                 <div className="bg-amber-50 p-4 rounded-lg mb-6">
                   <p className="text-sm text-slate-600 mb-1">Price Per Pound</p>

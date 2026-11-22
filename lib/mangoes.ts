@@ -6,6 +6,7 @@ import {
   getFallbackAvailableMangoes,
   getFallbackMangoesWithMeta,
 } from '@/lib/mangoCatalogFallback'
+import { varietyPhotoUrl } from '@/lib/mangoImages'
 
 // Cache management for database fruits
 let cachedFruits: FruitWithImage[] | null = null
@@ -169,11 +170,9 @@ function convertFruitsToMangoVarietiesWithMeta(
 }
 
 /**
- * Generate placeholder image URL for a fruit variety.
- * Uses lowercase mango name with .svg extension.
- * Falls back to generic SVG if specific variety image not found.
+ * Photo for a variety that has no uploaded image.
+ * "Frorigan" resolves to the Florigon JPG. The SVG is the onError fallback.
  */
 function getPlaceholderImageUrl(fruitName: string): string {
-  const sanitized = fruitName.toLowerCase().replace(/\s+/g, '-')
-  return `/images/mangoes/${sanitized}.svg`
+  return varietyPhotoUrl(fruitName)
 }

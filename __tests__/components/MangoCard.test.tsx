@@ -24,13 +24,32 @@ describe('MangoCard', () => {
 
   test('displays mango image with alt text', () => {
     render(<MangoCard mango={mockMango} onClick={() => {}} />);
-    const img = screen.getByAltText('Carrie');
+    const img = screen.getByAltText('Carrie mango');
+    expect(img.getAttribute('src')).toContain('carrie.jpg');
     expect(img).toBeInTheDocument();
   });
 
-  test('displays in season badge when mango is in season', () => {
-    render(<MangoCard mango={mockMango} onClick={() => {}} />);
-    expect(screen.getByText(/in season/i)).toBeInTheDocument();
+  test('displays In Season during the harvest window', () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(2026, 6, 15, 12));
+    try {
+      render(<MangoCard mango={mockMango} onClick={() => {}} />);
+      expect(screen.getByText('In Season')).toBeInTheDocument();
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  test('replaces the In Season badge outside the harvest window', () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(2026, 10, 21, 12));
+    try {
+      render(<MangoCard mango={mockMango} onClick={() => {}} />);
+      expect(screen.getByText('Pre-orders for the 2027 season open soon')).toBeInTheDocument();
+      expect(screen.queryByText('In Season')).not.toBeInTheDocument();
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   test('does not display in season badge when mango is not in season', () => {

@@ -16,7 +16,7 @@ Use this doc when talking to Cursor or ChatGPT about the storefront. Prefer **UR
 | “Header cart”, “mini cart” | **`SiteHeader`** — **Cart** control **after Shop** opens global cart |
 | “Admin shell” | **`app/admin/layout.tsx`** (login excluded from gate) |
 
-**Brand names in UI:** header/footer use **Mango Tango Farm**; legacy “Seasonal Fruit Farm” text may exist in metadata—say which screen if reporting copy drift.
+**Brand name in UI:** header, footer, and metadata use `BRAND_NAME` in `lib/site.ts` (currently Pine Island Mango Grove).
 
 ---
 

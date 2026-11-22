@@ -1,8 +1,10 @@
+import { BRAND_NAME } from '@/lib/site'
+
 export const aboutContent = {
   hero: {
-    headline: 'The Story of Mango Tango Farm',
+    headline: `The Story of ${BRAND_NAME}`,
     subheading:
-      'From tech career to organic farming—a journey of passion and resilience',
+      'From a tech career to naturally grown mangoes — a journey of passion and resilience',
   },
   journey: {
     headline: 'From Philadelphia to Pine Island',

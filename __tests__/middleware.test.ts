@@ -1,8 +1,13 @@
-describe('Middleware', () => {
-  it('middleware.ts file exists at project root', () => {
-    // This test verifies the middleware file is in place
-    // Full middleware testing requires Next.js dev environment
-    expect(true).toBe(true)
+import fs from 'fs'
+import path from 'path'
+
+describe('Proxy', () => {
+  it('proxy.ts replaces deprecated middleware.ts', () => {
+    const root = process.cwd()
+    expect(fs.existsSync(path.join(root, 'proxy.ts'))).toBe(true)
+    expect(fs.existsSync(path.join(root, 'middleware.ts'))).toBe(false)
+    const source = fs.readFileSync(path.join(root, 'proxy.ts'), 'utf8')
+    expect(source).toMatch(/export function proxy/)
   })
 
   it('middleware captures visitor IP from request headers', () => {

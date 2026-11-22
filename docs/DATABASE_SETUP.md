@@ -61,7 +61,7 @@ supabase db push
    - Carrie (6.50, in_season: true, available: true)
    - Mallika (6.50, in_season: true, available: true)
    - Nam Dok Mai (7.50, in_season: false, available: true)
-   - Frorigan (6.00, in_season: true, available: true)
+   - Florigon (6.00, in_season: true, available: true)
    - Kent (6.50, in_season: true, available: true)
    - Tommy Atkins (5.50, in_season: true, available: true)
    - Ataulfo (8.00, in_season: false, available: true)

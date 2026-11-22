@@ -8,7 +8,7 @@ export const testimonials = [
   },
   {
     quote:
-      'I love knowing that I\'m supporting a woman farmer committed to organic practices. The quality speaks for itself. Highly recommend!',
+      'I love knowing that I\'m supporting a woman farmer committed to naturally grown fruit. The quality speaks for itself. Highly recommend!',
     customerName: 'James & Lisa T.',
     rating: 5,
     verified: true,

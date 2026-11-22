@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { BRAND_NAME } from '@/lib/site'
 import { CartItem, CheckoutFormData } from '@/lib/types'
 import {
   lookupOrCreateCustomer,
@@ -282,7 +283,7 @@ export function CheckoutForm({
             <div>
               <p className="font-semibold text-slate-900">Manual Payment (Zelle)</p>
               <p className="text-sm text-slate-600">
-                Transfer ${cartTotal.toFixed(2)} via Zelle to the farm. Account: Seasonal Fruit Farm
+                Transfer ${cartTotal.toFixed(2)} via Zelle to the farm. Account: {BRAND_NAME}
               </p>
             </div>
           </label>

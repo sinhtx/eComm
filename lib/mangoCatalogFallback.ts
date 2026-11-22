@@ -1,4 +1,5 @@
 import type { MangoVariety } from '@/lib/types'
+import { varietyPhotoUrl } from '@/lib/mangoImages'
 
 /**
  * Static catalog used when Supabase is unreachable (CI, local without DB, network errors).
@@ -10,7 +11,7 @@ const FALLBACK: MangoVariety[] = [
     name: 'Carrie',
     description:
       'Sweet, smooth tropical flavor with minimal fiber. Perfect for first-time mango lovers.',
-    imageUrl: '/images/mangoes/carrie.svg',
+    imageUrl: varietyPhotoUrl('Carrie'),
     available: true,
     inSeason: true,
     pricePerPound: 6.5,
@@ -20,7 +21,7 @@ const FALLBACK: MangoVariety[] = [
     name: 'Mallika',
     description:
       'Rich, creamy texture with balanced sweetness and slight tang. A customer favorite.',
-    imageUrl: '/images/mangoes/mallika.svg',
+    imageUrl: varietyPhotoUrl('Mallika'),
     available: true,
     inSeason: true,
     pricePerPound: 6.5,
@@ -30,16 +31,16 @@ const FALLBACK: MangoVariety[] = [
     name: 'Nam Dok Mai',
     description:
       'Golden-colored with floral notes and smooth, fiber-free flesh. Premium quality.',
-    imageUrl: '/images/mangoes/nam-dok-mai.svg',
+    imageUrl: varietyPhotoUrl('Nam Dok Mai'),
     available: true,
     inSeason: false,
     pricePerPound: 7.5,
   },
   {
-    id: 'fallback-frorigan',
-    name: 'Frorigan',
+    id: 'fallback-florigon',
+    name: 'Florigon',
     description: 'Large, vibrant mango with sweet juice and aromatic flavor profile.',
-    imageUrl: '/images/mangoes/frorigan.svg',
+    imageUrl: varietyPhotoUrl('Florigon'),
     available: true,
     inSeason: true,
     pricePerPound: 6.0,
@@ -48,7 +49,7 @@ const FALLBACK: MangoVariety[] = [
     id: 'fallback-kent',
     name: 'Kent',
     description: 'Stringless, creamy flesh with delicate sweetness. Excellent for fresh eating.',
-    imageUrl: '/images/mangoes/kent.svg',
+    imageUrl: varietyPhotoUrl('Kent'),
     available: true,
     inSeason: true,
     pricePerPound: 6.5,
@@ -58,7 +59,7 @@ const FALLBACK: MangoVariety[] = [
     name: 'Tommy Atkins',
     description:
       'Firm texture, good shipping quality, naturally sweet with slight tartness.',
-    imageUrl: '/images/mangoes/tommy-atkins.svg',
+    imageUrl: varietyPhotoUrl('Tommy Atkins'),
     available: true,
     inSeason: true,
     pricePerPound: 5.5,
@@ -67,7 +68,7 @@ const FALLBACK: MangoVariety[] = [
     id: 'fallback-ataulfo',
     name: 'Ataulfo',
     description: 'Small but mighty—dense, creamy, and intensely sweet. No fiber.',
-    imageUrl: '/images/mangoes/ataulfo.svg',
+    imageUrl: varietyPhotoUrl('Ataulfo'),
     available: true,
     inSeason: false,
     pricePerPound: 8.0,
@@ -76,7 +77,7 @@ const FALLBACK: MangoVariety[] = [
     id: 'fallback-alphonso',
     name: 'Alphonso',
     description: 'The King of Mangoes—buttery texture, complex flavor, premium delicacy.',
-    imageUrl: '/images/mangoes/alphonso.svg',
+    imageUrl: varietyPhotoUrl('Alphonso'),
     available: true,
     inSeason: false,
     pricePerPound: 9.0,
@@ -85,7 +86,7 @@ const FALLBACK: MangoVariety[] = [
     id: 'fallback-haden',
     name: 'Haden',
     description: 'Classic heritage variety, red-blushed skin, sweet and aromatic.',
-    imageUrl: '/images/mangoes/haden.svg',
+    imageUrl: varietyPhotoUrl('Haden'),
     available: true,
     inSeason: false,
     pricePerPound: 6.5,

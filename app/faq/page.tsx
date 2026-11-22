@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { getSeasonRangeLabel } from '@/lib/season'
 
 interface FAQItem {
   question: string
@@ -11,17 +12,17 @@ const faqs: FAQItem[] = [
   {
     question: 'What varieties of mangoes do you sell?',
     answer:
-      'We grow and sell premium organic mango varieties including Carrie, Mallika, Nam Dok Mai, Frorigan, Kent, Tommy Atkins, Ataulfo, Alphonso, and Haden. Each variety has unique flavor profiles and availability seasons.',
+      'We grow and sell naturally grown Florida mangoes, including Carrie, Mallika, Nam Dok Mai, Florigon, Kent, Tommy Atkins, Ataulfo, Alphonso, and Haden. Each variety has its own flavor and season.',
   },
   {
     question: 'Are your mangoes organic?',
     answer:
-      'Yes! Our mangoes are grown using organic farming practices with the same rigorous standards we would use for our own family. While we don\'t have formal organic certification, we follow strict organic protocols.',
+      'They are naturally grown Florida mangoes, and we are not certified organic. We don\'t use synthetic pesticides or chemical fertilizers. We grow them to the same standard we would use for our own family.',
   },
   {
     question: 'When are mangoes in season?',
     answer:
-      'Mango season in Southwest Florida typically runs from May through September, with peak availability from June to August. Different varieties have different peak seasons. Check our Shop page for current availability.',
+      `${getSeasonRangeLabel()}. Different varieties have different peak seasons. Check our Shop page for current availability.`,
   },
   {
     question: 'How do I place an order?',
