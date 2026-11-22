@@ -30,7 +30,7 @@
   1. Carrie (6.50, in_season: true)
   2. Mallika (6.50, in_season: true)
   3. Nam Dok Mai (7.50, in_season: false)
-  4. Frorigan (6.00, in_season: true)
+  4. Florigon (6.00, in_season: true)
   5. Kent (6.50, in_season: true)
   6. Tommy Atkins (5.50, in_season: true)
   7. Ataulfo (8.00, in_season: false)

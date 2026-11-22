@@ -1,7 +1,7 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
+import { MangoImage } from '@/components/MangoImage'
 
 interface HeroSectionProps {
   backgroundImage: string
@@ -29,12 +29,13 @@ export function HeroSection({
   return (
     <div className={`relative ${heightClass} w-full overflow-hidden`}>
       {/* Background Image */}
-      <Image
+      <MangoImage
         src={backgroundImage}
         alt="Hero background"
         fill
         className="object-cover"
         priority
+        sizes="100vw"
       />
 
       {/* Warm Overlay */}

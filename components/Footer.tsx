@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import { SocialLinks } from '@/components/SocialLinks'
+import { BRAND_NAME, hasSocialLinks } from '@/lib/site'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -9,13 +11,13 @@ export function Footer() {
     <footer className="bg-neutral-charcoal text-neutral-cream py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className={`grid grid-cols-1 ${hasSocialLinks() ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-8 mb-8`}>
           {/* Brand */}
           <div>
-            <h3 className="text-h3 mb-2">Mango Tango Farm</h3>
+            <h3 className="text-h3 mb-2">{BRAND_NAME}</h3>
             <p className="text-sm text-neutral-gray">
-              Fresh, organic mangoes from Pine Island, FL. Small-batch farming
-              with big values.
+              Naturally grown Florida mangoes from Pine Island, FL. Small-batch
+              farming with big values.
             </p>
           </div>
 
@@ -56,7 +58,7 @@ export function Footer() {
             <h4 className="font-semibold mb-4">Contact</h4>
             <ul className="space-y-2 text-sm">
               <li className="text-neutral-gray">
-                Mango Tango Farm <br /> Pine Island, FL
+                {BRAND_NAME} <br /> Pine Island, FL
               </li>
               <li>
                 <a
@@ -70,28 +72,15 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Social */}
-          <div>
-            <h4 className="font-semibold mb-4">Follow Us</h4>
-            <div className="flex gap-4">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-neutral-cream hover:text-primary-yellow"
-              >
-                Instagram
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-neutral-cream hover:text-primary-yellow"
-              >
-                Facebook
-              </a>
+          {hasSocialLinks() ? (
+            <div>
+              <h4 className="font-semibold mb-4">Follow Us</h4>
+              <SocialLinks
+                className="flex gap-4"
+                linkClassName="text-neutral-cream hover:text-primary-yellow"
+              />
             </div>
-          </div>
+          ) : null}
         </div>
 
         {/* Divider */}
@@ -99,13 +88,16 @@ export function Footer() {
 
         {/* Legal & Copyright */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-neutral-gray">
-          <p>© {currentYear} Mango Tango Farm. All rights reserved.</p>
+          <p>© {currentYear} {BRAND_NAME}. All rights reserved.</p>
           <div className="flex gap-6">
             <Link href="/privacy" className="hover:text-neutral-cream">
               Privacy Policy
             </Link>
             <Link href="/terms" className="hover:text-neutral-cream">
               Terms of Service
+            </Link>
+            <Link href="/credits" className="hover:text-neutral-cream">
+              Photo credits
             </Link>
           </div>
         </div>

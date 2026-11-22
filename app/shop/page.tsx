@@ -1,8 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { getAllMangoes } from '@/lib/mangoes'
+import { MangoImage } from '@/components/MangoImage'
+import { SeasonBadge } from '@/components/SeasonBadge'
+import { formatDateOnly } from '@/lib/formatDate'
+import { VARIETY_IMAGE_SIZES, varietyImageAlt } from '@/lib/mangoImages'
 import { useCart } from '@/components/CartProvider'
 import type { MangoVariety } from '@/lib/types'
 
@@ -112,24 +115,23 @@ export default function ShopPage() {
               <div key={mango.id} className="card hover:shadow-lg transition-shadow">
                 {/* Image */}
                 <div className="relative h-48 w-full overflow-hidden bg-neutral-off-white">
-                  <Image
+                  <MangoImage
                     src={mango.imageUrl}
-                    alt={mango.name}
+                    alt={varietyImageAlt(mango.name)}
                     fill
+                    sizes={VARIETY_IMAGE_SIZES}
                     className="object-cover hover:scale-110 transition-transform duration-300"
                   />
 
                   {/* Badge */}
-                  <div className="absolute top-3 right-3">
+                  <div className="absolute top-3 right-3 left-3 flex justify-end">
                     {isComingSoon ? (
                       <span className="bg-neutral-charcoal text-neutral-cream px-3 py-1 rounded-full text-xs font-semibold">
                         Coming Soon
                       </span>
-                    ) : mango.inSeason ? (
-                      <span className="bg-accent-pink text-white px-3 py-1 rounded-full text-xs font-semibold">
-                        In Season
-                      </span>
-                    ) : null}
+                    ) : (
+                      <SeasonBadge inSeason={mango.inSeason} />
+                    )}
                   </div>
                 </div>
 
@@ -142,7 +144,7 @@ export default function ShopPage() {
                   <div className="mb-4">
                     {isComingSoon ? (
                       <span className="text-small font-semibold text-secondary-green">
-                        Available {item.comingSoonDate}
+                        {item.comingSoonDate ? formatDateOnly(item.comingSoonDate) : null}
                       </span>
                     ) : (
                       <span className="text-body font-semibold text-primary-yellow">

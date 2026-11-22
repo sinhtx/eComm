@@ -1,7 +1,8 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
+import { MangoImage } from '@/components/MangoImage'
+import { varietyImageAlt } from '@/lib/mangoImages'
 
 interface SeasonalHighlightProps {
   mangoName: string
@@ -24,10 +25,11 @@ export function SeasonalHighlight({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           {/* Image */}
           <div className="relative h-96 md:h-full rounded-lg overflow-hidden">
-            <Image
+            <MangoImage
               src={imageUrl}
-              alt={mangoName}
+              alt={varietyImageAlt(mangoName)}
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
           </div>

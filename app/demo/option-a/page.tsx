@@ -1,8 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { MangoVariety, CartItem } from '@/lib/types';
+import { MangoImage } from '@/components/MangoImage';
+import { SeasonBadge } from '@/components/SeasonBadge';
+import { BRAND_NAME } from '@/lib/site';
+import { VARIETY_IMAGE_SIZES, varietyImageAlt } from '@/lib/mangoImages';
 import { getAvailableMangoes } from '@/lib/mangoes';
 import { PricingToggle } from '@/components/PricingToggle';
 
@@ -52,7 +55,7 @@ export default function OptionA() {
       <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Seasonal Fruit Farm</h1>
+            <h1 className="text-2xl font-bold text-slate-900">{BRAND_NAME}</h1>
             <p className="text-sm text-slate-600">Option A: Compact Cards + Modal</p>
           </div>
           <button
@@ -96,24 +99,16 @@ export default function OptionA() {
             >
               {/* COMPACT h-40 instead of h-64 */}
               <div className="relative h-40 w-full overflow-hidden bg-slate-100">
-                <Image
+                <MangoImage
                   src={mango.imageUrl}
-                  alt={mango.name}
+                  alt={varietyImageAlt(mango.name)}
                   fill
+                  sizes={VARIETY_IMAGE_SIZES}
                   className="object-cover"
-                  onError={(e) => {
-                    const img = e.target as HTMLImageElement;
-                    img.src =
-                      'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23e2e8f0" width="200" height="200"/%3E%3Ctext x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23cbd5e1" font-size="12"%3E' +
-                      encodeURIComponent(mango.name) +
-                      '%3C/text%3E%3C/svg%3E';
-                  }}
                 />
-                {mango.inSeason && (
-                  <div className="absolute top-2 right-2 bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                    In Season
-                  </div>
-                )}
+                <div className="absolute top-2 right-2 left-2 flex justify-end">
+                  <SeasonBadge inSeason={mango.inSeason} />
+                </div>
               </div>
 
               <div className="p-3">

@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { CartProvider } from "@/components/CartProvider";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TrafficLogger } from "@/components/TrafficLogger";
-import { getSiteUrl } from "@/lib/siteUrl";
+import { BRAND_NAME, pageMetadata, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,31 +18,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = getSiteUrl();
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: "Mango Tango Farm | Premium Organic Mangoes",
-    template: "%s | Mango Tango Farm",
-  },
-  description:
-    "Fresh organic mangoes from Pine Island, Florida. Shop premium varieties, curated mix boxes, and seasonal specials.",
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    siteName: "Mango Tango Farm",
-    title: "Mango Tango Farm | Premium Organic Mangoes",
+  ...pageMetadata({
+    title: `${BRAND_NAME} | Naturally grown Florida mangoes`,
     description:
-      "Fresh organic mangoes from Pine Island, Florida. Handpicked, small-batch.",
-    url: siteUrl,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Mango Tango Farm | Premium Organic Mangoes",
-    description:
-      "Fresh organic mangoes from Pine Island, Florida. Handpicked, small-batch.",
-  },
+      "Naturally grown Florida mangoes from Pine Island. Shop seasonal varieties and curated mix boxes. Not certified organic.",
+    path: "/",
+  }),
+  metadataBase: new URL(SITE_URL),
   icons: {
     icon: "/favicon.ico",
   },

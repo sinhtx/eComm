@@ -44,7 +44,7 @@ export default function AboutPage() {
         subtitle="Standards we live by"
         body={aboutContent.organic.body}
         imageUrl="/images/organic-farming.jpg"
-        imageAlt="Organic farming practices"
+        imageAlt="Naturally grown mangoes on the farm"
         backgroundColor="cream"
       />
 

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useCart } from '@/components/CartProvider'
+import { BRAND_NAME } from '@/lib/site'
 
 /** Nav items before Cart (desktop: Cart sits after Shop, top-right cluster). */
 const NAV_BEFORE_CART = [
@@ -59,10 +60,10 @@ export function SiteHeader() {
             className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 rounded-sm"
           >
             <span className="text-xl sm:text-2xl font-bold text-slate-900 truncate">
-              Mango Tango Farm
+              {BRAND_NAME}
             </span>
             <p className="text-slate-600 text-xs sm:text-sm mt-0.5 truncate">
-              Premium organic mangoes — Pine Island, Florida
+              Naturally grown Florida mangoes — Pine Island, Florida
             </p>
           </Link>
         </div>

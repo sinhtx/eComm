@@ -1,6 +1,6 @@
 # Project Plan (Detailed)
 
-This plan is the single source of truth for the Seasonal Fruit Farm MVP. Each part includes a checklist, tests, and success criteria.
+This plan is the single source of truth for the Pine Island Mango Grove MVP. Each part includes a checklist, tests, and success criteria.
 
 ## Part 1: Project Setup & Professional Product Catalog Page ✅ COMPLETE
 
@@ -13,7 +13,7 @@ This plan is the single source of truth for the Seasonal Fruit Farm MVP. Each pa
 
 **Data Architecture**
 - ✅ **10 Premium Mango Varieties** with admin-controlled availability and seasonality flags:
-  - Carrie, Mallika, Nam Dok Mai, Frorigan, Kent, Tommy Atkins, Ataulfo, Alphonso, Haden, Francis
+  - Carrie, Mallika, Nam Dok Mai, Florigon, Kent, Tommy Atkins, Ataulfo, Alphonso, Haden, Francis
   - Each variety has: name, description, image, price/lb, available flag, inSeason flag
   - Admin can enable/disable varieties or mark as in/out of season via `lib/mangoes.ts`
 - ✅ **3 Predefined Mix Boxes** (curated, not customizable):

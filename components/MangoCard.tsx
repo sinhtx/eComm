@@ -1,7 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import { MangoVariety } from '@/lib/types';
+import { MangoImage } from '@/components/MangoImage';
+import { SeasonBadge } from '@/components/SeasonBadge';
+import { formatDateOnly } from '@/lib/formatDate';
+import { VARIETY_IMAGE_SIZES, varietyImageAlt } from '@/lib/mangoImages';
 
 interface MangoCardProps {
   mango: MangoVariety;
@@ -15,18 +18,6 @@ interface MangoCardProps {
 function isComingSoon(comingSoonDate: string | null | undefined): boolean {
   if (!comingSoonDate) return false;
   return new Date(comingSoonDate) > new Date();
-}
-
-/**
- * Format a date string for display as "Month Day, Year" (e.g., "June 15, 2026").
- */
-function formatComingSoonDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
 }
 
 export function MangoCard({
@@ -47,22 +38,16 @@ export function MangoCard({
       }`}
     >
       <div className="relative h-64 w-full overflow-hidden bg-slate-100">
-        <Image
+        <MangoImage
           src={mango.imageUrl}
-          alt={mango.name}
+          alt={varietyImageAlt(mango.name)}
           fill
+          sizes={VARIETY_IMAGE_SIZES}
           className="object-cover"
-          onError={(e) => {
-            const img = e.target as HTMLImageElement;
-            img.src =
-              'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="300"%3E%3Crect fill="%23e2e8f0" width="300" height="300"/%3E%3Ctext x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23cbd5e1" font-size="16"%3E' +
-              encodeURIComponent(mango.name) +
-              '%3C/text%3E%3C/svg%3E';
-          }}
         />
-        {mango.inSeason && !coming_soon && (
-          <div className="absolute top-3 right-3 bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-            In Season
+        {!coming_soon && (
+          <div className="absolute top-3 right-3 left-3 flex justify-end">
+            <SeasonBadge inSeason={mango.inSeason} />
           </div>
         )}
       </div>
@@ -89,7 +74,7 @@ export function MangoCard({
           <div className="bg-white/95 px-4 py-3 rounded-lg text-center shadow-lg">
             <p className="text-sm font-semibold text-slate-900">Coming Soon</p>
             <p className="text-xs text-slate-600 mt-1">
-              {formatComingSoonDate(comingSoonDate)}
+              {formatDateOnly(comingSoonDate)}
             </p>
           </div>
         </div>

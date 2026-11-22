@@ -44,7 +44,7 @@ VALUES
   ('Carrie', 'Sweet, smooth tropical flavor with minimal fiber. Perfect for first-time mango lovers.', 6.50, true, true),
   ('Mallika', 'Rich, creamy texture with balanced sweetness and slight tang. A customer favorite.', 6.50, true, true),
   ('Nam Dok Mai', 'Golden-colored with floral notes and smooth, fiber-free flesh. Premium quality.', 7.50, true, false),
-  ('Frorigan', 'Large, vibrant mango with sweet juice and aromatic flavor profile.', 6.00, true, true),
+  ('Florigon', 'Large, vibrant mango with sweet juice and aromatic flavor profile.', 6.00, true, true),
   ('Kent', 'Stringless, creamy flesh with delicate sweetness. Excellent for fresh eating.', 6.50, true, true),
   ('Tommy Atkins', 'Firm texture, good shipping quality, naturally sweet with slight tartness.', 5.50, true, true),
   ('Ataulfo', 'Small but mighty—dense, creamy, and intensely sweet. No fiber.', 8.00, true, false),

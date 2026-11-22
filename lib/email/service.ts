@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 import type { OrderWithCustomer, OrderItem, Customer } from '@/app/actions/adminOrders'
+import { BRAND_NAME } from '@/lib/site'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 // ADMIN_EMAIL is used as fallback when adminEmail parameter is not provided
@@ -52,7 +53,7 @@ export async function sendApprovalEmail(
     const result = await resend.emails.send({
       from: 'orders@seasonalfruitfarm.com',
       to: [customerEmail, adminEmail || ADMIN_EMAIL],
-      subject: `Your Seasonal Fruit Farm Order #${order.id} Approved`,
+      subject: `Your ${BRAND_NAME} Order #${order.id} Approved`,
       html: emailHtml,
     })
 
@@ -104,7 +105,7 @@ export async function sendCancellationEmail(
     const result = await resend.emails.send({
       from: 'orders@seasonalfruitfarm.com',
       to: [customerEmail, adminEmail || ADMIN_EMAIL],
-      subject: `Your Seasonal Fruit Farm Order #${order.id} Cancelled`,
+      subject: `Your ${BRAND_NAME} Order #${order.id} Cancelled`,
       html: emailHtml,
     })
 

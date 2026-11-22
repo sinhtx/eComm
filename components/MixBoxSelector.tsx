@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import { MixBox } from '@/lib/types';
+import { MangoImage } from '@/components/MangoImage';
 import { mixBoxes } from '@/lib/mixBoxes';
 
 interface MixBoxSelectorProps {
@@ -18,15 +18,12 @@ export function MixBoxSelector({ onSelectMixBox }: MixBoxSelectorProps) {
           className="group relative overflow-hidden rounded-lg bg-white shadow-md transition-all hover:shadow-xl hover:scale-105 text-left"
         >
           <div className="relative h-64 w-full overflow-hidden bg-slate-100">
-            <Image
+            <MangoImage
               src={box.imageUrl}
               alt={box.name}
               fill
               className="object-cover"
-              onError={(e) => {
-                const img = e.target as HTMLImageElement;
-                img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="300"%3E%3Crect fill="%23fef3c7" width="300" height="300"/%3E%3Ctext x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23d97706" font-size="14" font-weight="bold"%3E' + encodeURIComponent(box.name) + '%3C/text%3E%3C/svg%3E';
-              }}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           </div>
 

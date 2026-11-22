@@ -36,7 +36,7 @@ describe('Home Page', () => {
       expect(screen.getByText(/Why Choose Our Mangoes/i)).toBeInTheDocument();
     });
     await waitFor(() => {
-      expect(screen.getByText(/Organic Philosophy/i)).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Naturally Grown' })).toBeInTheDocument();
     });
   });
 

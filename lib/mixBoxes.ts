@@ -13,7 +13,7 @@ export const mixBoxes: MixBox[] = [
   {
     id: 'large-mix',
     name: 'Large Mix Box',
-    varieties: ['carrie', 'mallika', 'kent', 'frorigan', 'tommy-atkins'],
+    varieties: ['carrie', 'mallika', 'kent', 'florigon', 'tommy-atkins'],
     weight: 18,
     price: 85.0,
     imageUrl: '/images/mangoes/mix-box-large.svg',

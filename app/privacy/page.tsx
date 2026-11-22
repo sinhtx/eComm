@@ -1,5 +1,7 @@
 'use client'
 
+import { BRAND_NAME, SITE_URL } from '@/lib/site'
+
 export default function PrivacyPage() {
   return (
     <div className="bg-neutral-cream min-h-screen py-16 px-4">
@@ -10,7 +12,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-h2 mb-4">1. Introduction</h2>
             <p>
-              {`Mango Tango Farm ("we" or "us" or "our") operates the www.flmango.com website (the "Service"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data.`}
+              {`${BRAND_NAME} ("we" or "us" or "our") operates ${SITE_URL} (the "Service"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data.`}
             </p>
           </section>
 
@@ -32,7 +34,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-h2 mb-4">3. Use of Data</h2>
-            <p>Mango Tango Farm uses the collected data for various purposes:</p>
+            <p>{BRAND_NAME} uses the collected data for various purposes:</p>
             <ul className="list-disc list-inside space-y-2 ml-4">
               <li>To provide and maintain our Service</li>
               <li>To notify you about changes to our Service</li>
@@ -54,7 +56,7 @@ export default function PrivacyPage() {
             <p>If you have any questions about this Privacy Policy, please contact us:</p>
             <ul className="list-disc list-inside space-y-2 ml-4">
               <li>By email: contact@mangotangofarm.com</li>
-              <li>By mail: Mango Tango Farm, Pine Island, FL</li>
+              <li>By mail: {BRAND_NAME}, Pine Island, FL</li>
             </ul>
           </section>
 

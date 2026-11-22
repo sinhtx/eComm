@@ -1,7 +1,7 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
+import { MangoImage } from '@/components/MangoImage'
 
 interface StoryBeatProps {
   title: string
@@ -31,11 +31,12 @@ export function StoryBeat({
 
   const imageCol = (
     <div className="relative h-96 md:h-full rounded-lg overflow-hidden">
-      <Image
+      <MangoImage
         src={imageUrl}
         alt={imageAlt}
         fill
         className="object-cover"
+        sizes="(max-width: 768px) 100vw, 50vw"
       />
     </div>
   )

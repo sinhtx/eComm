@@ -1,6 +1,6 @@
 # Part 2 Setup Guide: Supabase & MaxMind GeoIP Configuration
 
-This guide walks through setting up Supabase (PostgreSQL database) and MaxMind GeoIP for the Seasonal Fruit Farm e-commerce platform.
+This guide walks through setting up Supabase (PostgreSQL database) and MaxMind GeoIP for the Pine Island Mango Grove e-commerce platform.
 
 ## Prerequisites
 
